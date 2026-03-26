@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HFL – Certificate</title>
+<title>HFL – User Portal</title>
 
 <style>
 :root { --gold:#d4af37; --neon:#0ff; --bg:#0a0a0c; }
@@ -16,134 +16,169 @@ input,button { padding:12px; border-radius:8px; border:none; }
 button { background:var(--neon); font-weight:bold; cursor:pointer; }
 .hidden { display:none; }
 
-#certCanvas { width:100%; background:#fff; border:2px solid var(--gold); }
+#certCanvas { width:100%; background:#fff; border:2px solid var(--gold); margin-bottom:10px; }
+#chat { height:200px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:10px; border-radius:10px; margin-top:15px; }
+.message { margin:3px 0; }
+.message span { font-weight:bold; }
+.status-dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; background:#0f0; animation:blink 1s infinite; }
+@keyframes blink { 0%,50%,100% { opacity:1; } 25%,75% { opacity:0; } }
 </style>
 </head>
-
 <body>
 
 <div class="app-container">
-<h2>HFL TERMINAL</h2>
+<h2>HFL USER PORTAL</h2>
 
 <div class="grid">
 <div>
-<input id="name" placeholder="Full Name">
-<button id="btn">Generate</button>
-<button id="download" class="hidden">Download PDF</button>
+<input id="username" placeholder="Enter your name">
+<button id="loginBtn">Login</button>
+
+<div id="userPanel" class="hidden">
+    <input id="name" placeholder="Full Name">
+    <button id="generateBtn">Generate Certificate</button>
+    <button id="downloadBtn" class="hidden">Download PDF</button>
+    <div id="chat"></div>
+</div>
 </div>
 
 <canvas id="certCanvas" width="800" height="560"></canvas>
 </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
-const canvas = document.getElementById("certCanvas");
-const ctx = canvas.getContext("2d");
+// --- Firebase config ---
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_BUCKET",
+  messagingSenderId: "YOUR_SENDER",
+  appId: "YOUR_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-// --- Serial ---
-const genSerial = () => "HFL-" + Math.floor(Math.random()*999999);
+// --- Login ---
+let currentUser = null;
+const loginBtn = document.getElementById('loginBtn');
+const usernameInput = document.getElementById('username');
+loginBtn.onclick = async () => {
+    const name = usernameInput.value.trim();
+    if(!name) return alert("Enter your name");
+    currentUser = name;
+    document.getElementById('userPanel').classList.remove('hidden');
 
-// --- ASCII Binary Figure with Glitch ---
-const drawBinaryFigure = () => {
-    ctx.save();
-
-    const x0=80, y0=180, w=160, h=200;
-    // frame with glow
-    ctx.shadowColor="rgba(0,255,255,0.3)";
-    ctx.shadowBlur=15;
-    ctx.strokeStyle="#003366";
-    ctx.lineWidth=2;
-    ctx.strokeRect(x0,y0,w,h);
-
-    // binary figure
-    ctx.font="10px monospace";
-    ctx.textBaseline="top";
-    for(let i=0;i<20;i++){
-        let line="";
-        for(let j=0;j<20;j++){
-            line += Math.random()>0.5 ? "1":"0";
-        }
-        // glitch effect: random horizontal shift
-        ctx.fillStyle="rgba(0,0,0,"+ (0.3 + Math.random()*0.2) +")";
-        ctx.fillText(line, x0 + 10 + Math.random()*3, y0 + 10 + i*10);
+    // Add user if not exists
+    const userRef = db.collection('users').doc(currentUser);
+    const userSnap = await userRef.get();
+    if(!userSnap.exists){
+        await userRef.set({name:currentUser, approved:false, requested:false, joinedAt:firebase.firestore.FieldValue.serverTimestamp()});
     }
 
-    // blur overlay
-    ctx.fillStyle="rgba(255,255,255,0.5)";
-    ctx.fillRect(x0,y0,w,h);
+    // Listen for chat messages and approval
+    db.collection('messages').orderBy('timestamp').onSnapshot(snapshot=>{
+        const chat = document.getElementById('chat');
+        chat.innerHTML = '';
+        snapshot.forEach(doc=>{
+            const msg = doc.data();
+            if(msg.approved){
+                const div = document.createElement('div');
+                div.classList.add('message');
+                div.innerHTML = `<span>${msg.name}:</span> ${msg.text}`;
+                chat.appendChild(div);
+                chat.scrollTop = chat.scrollHeight;
+            }
+        });
+    });
 
+    // Approval listener
+    userRef.onSnapshot(doc=>{
+        const data = doc.data();
+        if(data.approved) document.getElementById('chat').insertAdjacentHTML('beforebegin','<div style="color:var(--gold)">✅ You are approved for chat!</div>');
+    });
+};
+
+// --- Certificate ---
+const canvas = document.getElementById("certCanvas");
+const ctx = canvas.getContext("2d");
+const nameInput = document.getElementById("name");
+const generateBtn = document.getElementById("generateBtn");
+const downloadBtn = document.getElementById("downloadBtn");
+
+const genSerial = () => "HFL-" + Math.floor(Math.random()*999999);
+
+const drawBinaryFigure = () => {
+    ctx.save();
+    ctx.strokeStyle="#003366";
+    ctx.lineWidth=2;
+    ctx.strokeRect(80,180,160,200);
+
+    ctx.font="10px monospace";
+    ctx.fillStyle="rgba(0,0,0,0.4)";
+    let y=200;
+    for(let i=0;i<20;i++){
+        let line="";
+        for(let j=0;j<20;j++) line += Math.random()>0.5 ? "1":"0";
+        ctx.fillText(line,90,y);
+        y+=10;
+    }
+
+    ctx.fillStyle="rgba(255,255,255,0.6)";
+    ctx.fillRect(80,180,160,200);
     ctx.restore();
 };
 
-// --- Render Certificate ---
 const render = (name,serial)=>{
     ctx.clearRect(0,0,800,560);
-
-    // paper
     ctx.fillStyle="#F9F9F7";
     ctx.fillRect(0,0,800,560);
-
-    // border
     ctx.strokeStyle="#d4af37";
     ctx.lineWidth=10;
     ctx.strokeRect(20,20,760,520);
     ctx.lineWidth=2;
     ctx.strokeRect(40,40,720,480);
 
-    // title
     ctx.fillStyle="#000";
     ctx.textAlign="center";
     ctx.font="bold 42px serif";
     ctx.fillText("HUMAN FREE LIGHT",400,100);
-
     ctx.font="22px sans-serif";
     ctx.fillText("OFFICIAL CERTIFICATE",400,140);
 
-    // name
     ctx.font="bold 40px serif";
     ctx.fillText(name,400,260);
 
-    // ASCII figure
     drawBinaryFigure();
 
-    // message
     ctx.font="bold 16px monospace";
     ctx.fillStyle="#003366";
     ctx.fillText("KEEP YOUR IDENTITY PRIVATE",400,350);
 
-    // serial
     ctx.font="14px monospace";
     ctx.fillStyle="#666";
     ctx.fillText("Serial: "+serial,400,480);
-
-    // watermark subtle diagonal
-    ctx.save();
-    ctx.translate(400,280);
-    ctx.rotate(-Math.PI/6);
-    ctx.font="bold 70px serif";
-    ctx.fillStyle="rgba(0,0,0,0.02)";
-    ctx.fillText("HFL OFFICIAL SYSTEM",0,0);
-    ctx.restore();
 };
 
-document.getElementById("btn").onclick=()=>{
-    const name=document.getElementById("name").value;
-    if(!name) return alert("enter name");
-    const serial=genSerial();
-    render(name,serial);
-    document.getElementById("download").classList.remove("hidden");
+generateBtn.onclick=()=>{
+    if(!nameInput.value) return alert("Enter your full name");
+    const serial = genSerial();
+    render(nameInput.value, serial);
+
+    // Send certificate request for approval
+    db.collection('users').doc(currentUser).update({requested:true});
+    downloadBtn.classList.remove('hidden');
 };
 
-document.getElementById("download").onclick=()=>{
+downloadBtn.onclick=()=>{
     const pdf = new jspdf.jsPDF('landscape','px',[800,560]);
     pdf.addImage(canvas.toDataURL(),'PNG',0,0,800,560);
     pdf.save("HFL_CERT.pdf");
 };
-
-// initial sample
-render("Sample Name","HFL-XXXX");
 </script>
 
 </body>
