@@ -1,195 +1,149 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HFL – Official Membership Certificate</title>
+<title>HFL – Certificate</title>
 
 <style>
-:root { --gold: #d4af37; --neon: #0ff; --bg: #0a0a0c; }
-body { margin:0; font-family:'Segoe UI', system-ui; background: var(--bg); color:#fff; overflow-x:hidden; }
+:root { --gold:#d4af37; --neon:#0ff; --bg:#0a0a0c; }
+body { margin:0; font-family:'Segoe UI'; background:var(--bg); color:#fff; }
 
-.app-container { max-width:1000px; margin:40px auto; padding:30px; background: rgba(255,255,255,0.03); border-radius:20px; border:1px solid rgba(0,255,255,0.1); backdrop-filter:blur(10px); box-shadow:0 0 40px rgba(0,0,0,0.5);}
-h1 { text-align:center; letter-spacing:5px; color: var(--neon); text-shadow:0 0 20px var(--neon); }
-
+.app-container { max-width:1000px; margin:40px auto; padding:30px; background:rgba(255,255,255,0.03); border-radius:20px; border:1px solid rgba(0,255,255,0.1); }
 .grid { display:grid; grid-template-columns:1fr 1.5fr; gap:30px; }
-.form-section { display:flex; flex-direction:column; gap:15px; }
 
-input { background: rgba(0,0,0,0.4); border:1px solid #333; padding:15px; border-radius:8px; color:#fff; transition:0.3s;}
-input:focus { border-color: var(--neon); outline:none; box-shadow:0 0 10px rgba(0,255,255,0.2);}
+input,button { padding:12px; border-radius:8px; border:none; }
+button { background:var(--neon); font-weight:bold; cursor:pointer; }
+.hidden { display:none; }
 
-button { background: var(--neon); color:#000; padding:15px; border:none; border-radius:8px; font-weight:900; cursor:pointer; text-transform:uppercase; transition:0.3s;}
-button:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 5px 15px var(--neon);}
-button:disabled { opacity:0.5; cursor:not-allowed;}
-
-#certCanvas { width:100%; border-radius:10px; border:2px solid var(--gold); background:#fff; box-shadow:0 20px 50px rgba(0,0,0,0.8);}
-.hidden { display:none;}
+#certCanvas { width:100%; background:#fff; border:2px solid var(--gold); }
 </style>
 </head>
+
 <body>
 
 <div class="app-container">
-<h1>HFL OFFICIAL TERMINAL</h1>
-<div class="grid">
-    <!-- User Side -->
-    <div class="form-section">
-        <h3 style="color: var(--gold)">🏛️ Join the Organization</h3>
-        <input type="text" id="name" placeholder="Full Name" required>
-        <button id="masterBtn">Generate Certificate & Verify Identity</button>
-        <button id="downloadBtn" class="hidden" style="background: var(--gold)">⬇️ Download PDF Certificate</button>
-    </div>
+<h2>HFL TERMINAL</h2>
 
-    <!-- Certificate Preview -->
-    <div class="preview-section">
-        <canvas id="certCanvas" width="800" height="560"></canvas>
-    </div>
+<div class="grid">
+<div>
+<input id="name" placeholder="Full Name">
+<button id="btn">Generate</button>
+<button id="download" class="hidden">Download PDF</button>
+</div>
+
+<canvas id="certCanvas" width="800" height="560"></canvas>
 </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script>
-window.onload = () => {
-    const canvas = document.getElementById('certCanvas');
-    const ctx = canvas.getContext('2d');
-    const masterBtn = document.getElementById('masterBtn');
-    const downloadBtn = document.getElementById('downloadBtn');
+const canvas = document.getElementById("certCanvas");
+const ctx = canvas.getContext("2d");
 
-    // --- Generate serial ---
-    const generateSerial = () => {
-        const raw = `HFL-${Math.floor(1000 + Math.random()*9000)}-${Date.now().toString().slice(-4)}`;
-        const check = raw.split('').reduce((acc,char)=>acc+char.charCodeAt(0),0)%10;
-        return `${raw}-${check}`;
-    };
+// --- Serial ---
+const genSerial = () => "HFL-" + Math.floor(Math.random()*999999);
 
-    // --- Render certificate (upgraded visual) ---
-    const renderCertificate = (name, serial) => {
-        ctx.clearRect(0,0,canvas.width,canvas.height);
+// --- ASCII Binary Figure with Glitch ---
+const drawBinaryFigure = () => {
+    ctx.save();
 
-        // Background - paper gradient
-        const paperGrad = ctx.createLinearGradient(0,0,0,560);
-        paperGrad.addColorStop(0,'#F9F9F7');
-        paperGrad.addColorStop(1,'#EAE9E5');
-        ctx.fillStyle = paperGrad;
-        ctx.fillRect(0,0,800,560);
+    const x0=80, y0=180, w=160, h=200;
+    // frame with glow
+    ctx.shadowColor="rgba(0,255,255,0.3)";
+    ctx.shadowBlur=15;
+    ctx.strokeStyle="#003366";
+    ctx.lineWidth=2;
+    ctx.strokeRect(x0,y0,w,h);
 
-        // Guilloche pattern
-        ctx.save();
-        ctx.strokeStyle='rgba(0,0,128,0.08)';
-        ctx.lineWidth=1;
-        for(let i=0;i<25;i++){
-            ctx.beginPath();
-            ctx.moveTo(20,i*22);
-            ctx.bezierCurveTo(200, i*15+30, 600, i*20+40, 780, i*22);
-            ctx.stroke();
+    // binary figure
+    ctx.font="10px monospace";
+    ctx.textBaseline="top";
+    for(let i=0;i<20;i++){
+        let line="";
+        for(let j=0;j<20;j++){
+            line += Math.random()>0.5 ? "1":"0";
         }
-        ctx.restore();
+        // glitch effect: random horizontal shift
+        ctx.fillStyle="rgba(0,0,0,"+ (0.3 + Math.random()*0.2) +")";
+        ctx.fillText(line, x0 + 10 + Math.random()*3, y0 + 10 + i*10);
+    }
 
-        // Outer double frame
-        ctx.strokeStyle="#d4af37";
-        ctx.lineWidth=15;
-        ctx.strokeRect(20,20,760,520);
-        ctx.lineWidth=3;
-        ctx.strokeRect(35,35,730,490);
+    // blur overlay
+    ctx.fillStyle="rgba(255,255,255,0.5)";
+    ctx.fillRect(x0,y0,w,h);
 
-        // Watermark
-        ctx.save();
-        ctx.translate(400,280);
-        ctx.rotate(-Math.PI/4);
-        ctx.font = "bold 80px 'Times New Roman'";
-        ctx.fillStyle = "rgba(0,0,0,0.03)";
-        ctx.textAlign = "center";
-        for(let i=-5;i<5;i++){
-            ctx.fillText("HFL OFFICIAL SYSTEM ".repeat(3),0,i*100);
-        }
-        ctx.restore();
-
-        // Organization name
-        ctx.fillStyle="#1a1a1a";
-        ctx.textAlign="center";
-        ctx.font="bold 50px 'Times New Roman'";
-        ctx.fillText("HUMAN FREE LIGHT (HFL)",400,100);
-
-        // Subtitle
-        ctx.font="28px 'Montserrat'";
-        ctx.fillText("Official Membership Certificate",400,150);
-
-        // Verification text
-        ctx.fillStyle="#333";
-        ctx.font="22px 'Roboto'";
-        ctx.fillText("This certifies that:",400,230);
-
-        // User name
-        ctx.fillStyle="#000";
-        ctx.font="bold 45px 'Times New Roman'";
-        ctx.fillText(name,400,290);
-
-        // Serial number and micro-text
-        ctx.font="14px 'Roboto'";
-        ctx.fillStyle="#666";
-        ctx.fillText(`Serial: ${serial}`,400,460);
-        ctx.font="10px 'Roboto'";
-        ctx.fillText(`Issued: ${new Date().toLocaleDateString()} | Verification Code: ${Math.floor(Math.random()*900000+100000)}`,400,480);
-
-        // 3D Seal
-        const sealX = 650, sealY = 420, sealR = 60;
-        ctx.save();
-        ctx.shadowColor = "rgba(0,0,0,0.3)";
-        ctx.shadowBlur = 15;
-        ctx.shadowOffsetX = 3;
-        ctx.shadowOffsetY = 3;
-        ctx.beginPath();
-        ctx.arc(sealX, sealY, sealR, 0, Math.PI*2);
-        ctx.fillStyle = "#003366"; // navy
-        ctx.fill();
-        ctx.strokeStyle = "#d4af37";
-        ctx.lineWidth = 4;
-        ctx.stroke();
-        ctx.restore();
-
-        // Seal text
-        ctx.save();
-        ctx.translate(sealX, sealY);
-        ctx.rotate(-Math.PI/2);
-        ctx.font = "bold 14px 'Roboto'";
-        ctx.fillStyle = "#FFD700"; // gold
-        const sealText = "APPROVED HFL OFFICIAL";
-        for(let i=0;i<sealText.length;i++){
-            const angle = (i - sealText.length/2) * 0.15;
-            ctx.save();
-            ctx.rotate(angle);
-            ctx.fillText(sealText[i],0,-sealR+15);
-            ctx.restore();
-        }
-        ctx.restore();
-
-        // Small inner circle of seal
-        ctx.beginPath();
-        ctx.arc(sealX, sealY, 25,0,Math.PI*2);
-        ctx.fillStyle="rgba(255,215,0,0.3)";
-        ctx.fill();
-    };
-
-    // --- Button handlers ---
-    masterBtn.addEventListener('click', () => {
-        const name = document.getElementById('name').value;
-        if(!name) return alert("Please enter a name");
-        masterBtn.disabled=true; masterBtn.innerText="Processing...";
-        const serial = generateSerial();
-        renderCertificate(name, serial);
-        downloadBtn.classList.remove('hidden');
-        masterBtn.disabled=false; masterBtn.innerText="Generate Certificate & Verify Identity";
-    });
-
-    downloadBtn.addEventListener('click', () => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jspdf.jsPDF('landscape','px',[800,560]);
-        pdf.addImage(imgData,'PNG',0,0,800,560);
-        pdf.save(`HFL_CERT_${Date.now()}.pdf`);
-    });
-
-    // Initial render
-    renderCertificate("Sample Name","HFL-XXXX-XXXX");
+    ctx.restore();
 };
+
+// --- Render Certificate ---
+const render = (name,serial)=>{
+    ctx.clearRect(0,0,800,560);
+
+    // paper
+    ctx.fillStyle="#F9F9F7";
+    ctx.fillRect(0,0,800,560);
+
+    // border
+    ctx.strokeStyle="#d4af37";
+    ctx.lineWidth=10;
+    ctx.strokeRect(20,20,760,520);
+    ctx.lineWidth=2;
+    ctx.strokeRect(40,40,720,480);
+
+    // title
+    ctx.fillStyle="#000";
+    ctx.textAlign="center";
+    ctx.font="bold 42px serif";
+    ctx.fillText("HUMAN FREE LIGHT",400,100);
+
+    ctx.font="22px sans-serif";
+    ctx.fillText("OFFICIAL CERTIFICATE",400,140);
+
+    // name
+    ctx.font="bold 40px serif";
+    ctx.fillText(name,400,260);
+
+    // ASCII figure
+    drawBinaryFigure();
+
+    // message
+    ctx.font="bold 16px monospace";
+    ctx.fillStyle="#003366";
+    ctx.fillText("KEEP YOUR IDENTITY PRIVATE",400,350);
+
+    // serial
+    ctx.font="14px monospace";
+    ctx.fillStyle="#666";
+    ctx.fillText("Serial: "+serial,400,480);
+
+    // watermark subtle diagonal
+    ctx.save();
+    ctx.translate(400,280);
+    ctx.rotate(-Math.PI/6);
+    ctx.font="bold 70px serif";
+    ctx.fillStyle="rgba(0,0,0,0.02)";
+    ctx.fillText("HFL OFFICIAL SYSTEM",0,0);
+    ctx.restore();
+};
+
+document.getElementById("btn").onclick=()=>{
+    const name=document.getElementById("name").value;
+    if(!name) return alert("enter name");
+    const serial=genSerial();
+    render(name,serial);
+    document.getElementById("download").classList.remove("hidden");
+};
+
+document.getElementById("download").onclick=()=>{
+    const pdf = new jspdf.jsPDF('landscape','px',[800,560]);
+    pdf.addImage(canvas.toDataURL(),'PNG',0,0,800,560);
+    pdf.save("HFL_CERT.pdf");
+};
+
+// initial sample
+render("Sample Name","HFL-XXXX");
 </script>
 
 </body>
