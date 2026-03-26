@@ -66,7 +66,19 @@ button { background:var(--neon); font-weight:bold; cursor:pointer; }
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+// --- כל הקוד הקיים שלך להנפקת תעודה, render, download וכו' ---
 
+// --- כאן מוסיפים את הכפתור Admin Login ---
+document.getElementById('adminBtn').onclick = () => {
+    const secret = prompt("Enter admin secret key:");
+    if(secret === "HFL_SUPER_SECRET"){ // <-- שנה כאן את הסיסמה שלך
+        window.location.href = "admin.html";
+    } else {
+        alert("Access denied!");
+    }
+};
+</script>
 <script>
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
