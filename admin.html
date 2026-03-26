@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HFL – Admin Panel</title>
+<style>
+:root { --gold:#d4af37; --neon:#0ff; --bg:#0a0a0c; }
+body { margin:0; font-family:'Segoe UI'; background:var(--bg); color:#fff; }
+table { width:100%; border-collapse:collapse; margin-top:20px; }
+th,td { padding:10px; border:1px solid #333; text-align:left; }
+button { padding:5px 10px; border-radius:5px; background:var(--neon); border:none; cursor:pointer; font-weight:bold; }
+.status { font-weight:bold; }
+.status.true { color:var(--gold); }
+.status.false { color:#f00; }
+</style>
+</head>
+<body>
+<h2>HFL – Admin Panel</h2>
+<table>
+<thead>
+<tr><th>Name</th><th>Requested</th><th>Approved</th><th>Action</th></tr>
+</thead>
+<tbody id="usersTable"></tbody>
+</table>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+// Firebase config same as user
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_BUCKET",
+  messagingSenderId: "YOUR_SENDER",
+  appId: "YOUR_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// Load users
+const usersTable = document.getElementById('usersTable');
+
+const loadUsers = ()=>{
+    db.collection('users').onSnapshot(snapshot=>{
+        usersTable.innerHTML='';
+        snapshot.forEach(doc=>{
+            const u = doc.data();
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${u.name}</td>
+                <td class="status ${u.requested}">${u.requested}</td>
+                <td class="status ${u.approved}">${u.approved || false}</td>
+                <td>${!u.approved && u.requested ? `<button onclick="approve('${doc.id}')">Approve</button>`:''}</td>
+            `;
+            usersTable.appendChild(tr);
+        });
+    });
+};
+
+const approve = async (id)=>{
+    await db.collection('users').doc(id).update({approved:true});
+    alert("User approved for chat");
+};
+
+loadUsers();
+</script>
+</body>
+</html>
