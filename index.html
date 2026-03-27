@@ -1,74 +1,237 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HFL – Certificate</title>
+<title>HFL – Human Free Light</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-:root { --gold:#d4af37; --neon:#0ff; --bg:#0a0a0c; }
-body { margin:0; font-family:'Segoe UI'; background:var(--bg); color:#fff; }
+:root {
+    --gold: #d4af37;
+    --neon: #0ff;
+    --bg: #0a0a0c;
+    --text: #fff;
+    --success: #0f0;
+    --error: #f33;
+}
 
-.app-container { max-width:1000px; margin:40px auto; padding:30px; background:rgba(255,255,255,0.03); border-radius:20px; border:1px solid rgba(0,255,255,0.1); }
-.grid { display:grid; grid-template-columns:1fr 1.5fr; gap:30px; }
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+}
 
-input,button { padding:12px; border-radius:8px; border:none; }
-button { background:var(--neon); font-weight:bold; cursor:pointer; }
-.hidden { display:none; }
+a { color: var(--neon); text-decoration: none; }
 
-#certCanvas { width:100%; background:#fff; border:2px solid var(--gold); border-radius:10px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);}
+header {
+    background: #101010;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 2px solid var(--gold);
+}
+
+header h1 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 2em;
+    letter-spacing: 2px;
+    color: var(--gold);
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+nav a { padding: 8px 16px; transition: 0.3s; }
+nav a:hover { background: var(--neon); color: #000; border-radius: 8px; }
+
+.container { max-width: 1200px; margin: 40px auto; padding: 20px; }
+
+h2 { font-family: 'Libre Baskerville', serif; color: var(--neon); }
+
+button {
+    background: var(--neon);
+    color: #000;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px var(--neon); }
+
+input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    width: 100%;
+    margin-bottom: 12px;
+    background: rgba(0,0,0,0.4);
+    color: #fff;
+}
+
+input:focus { outline: none; border-color: var(--neon); box-shadow: 0 0 8px var(--neon); }
+
+.hidden { display: none; }
+
+#certCanvas {
+    width: 100%;
+    border: 2px solid var(--gold);
+    border-radius: 10px;
+    background: #F9F9F7;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+}
+
+/* Chat styles */
+.chat-container {
+    background: #111;
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    padding: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.chat-message {
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    border-radius: 10px;
+    background: rgba(0,255,255,0.1);
+    position: relative;
+    animation: fadeIn 0.5s;
+}
+
+.chat-message .online-dot {
+    width: 10px;
+    height: 10px;
+    background: #0f0;
+    border-radius: 50%;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink { 0%,50%,100% {opacity:1} 25%,75% {opacity:0} }
+@keyframes fadeIn { from {opacity:0} to {opacity:1} }
+
+/* Success animation */
+.success {
+    animation: successAnim 1s ease forwards;
+}
+@keyframes successAnim {
+    0% { transform: scale(0.5); opacity:0; }
+    50% { transform: scale(1.1); opacity:1; }
+    100% { transform: scale(1); }
+}
 </style>
-</head>
 
+</head>
 <body>
 
-<div class="app-container">
-<h2>HFL TERMINAL</h2>
+<header>
+    <h1>HUMAN FREE LIGHT</h1>
+    <nav>
+        <a href="#home">Home 🏠</a>
+        <a href="#about">About ℹ️</a>
+        <a href="#contact">Contact 📬</a>
+        <a href="#login">Login 🔐</a>
+        <a href="#signup">Sign Up ✍️</a>
+    </nav>
+</header>
 
-<div class="grid">
-<!-- User Section -->
-<div>
-    <input id="name" placeholder="Full Name">
-    <button id="btn">Generate Certificate</button>
-    <button id="download" class="hidden">Download PDF</button>
-
-    <!-- Admin Login Button -->
-    <button id="adminBtn" style="
-        background: #d4af37; 
-        color: #000; 
-        padding: 12px 20px; 
-        border-radius: 8px; 
-        font-weight: bold; 
-        margin-top: 15px;
-        cursor: pointer;
-        border: none;
-    ">Admin Login</button>
+<div class="container" id="home">
+    <h2>Welcome to HFL 🌐</h2>
+    <p>This is the official platform for the Human Free Light organization.</p>
+    <canvas id="certCanvas" width="800" height="560"></canvas>
+    <div style="margin-top:20px;">
+        <input id="name" placeholder="Full Name">
+        <button id="generateBtn">Generate Certificate 📝</button>
+        <button id="downloadBtn" class="hidden">Download PDF ⬇️</button>
+    </div>
 </div>
 
-<!-- Certificate Preview -->
-<canvas id="certCanvas" width="800" height="560"></canvas>
-</div>
+<div class="container" id="about">
+    <h2>About Us</h2>
+    <p>
+    Human Free Light (HFL) is a civic organization advocating full personal freedom and building an alternative governance system. 
+    Our mission is to liberate humanity by empowering individuals to operate independently of centralized control. 
+    Once objectives are achieved and territory secured, HFL will self-dissolve to ensure autonomy remains with citizens.
+    </p>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<div class="container" id="contact">
+    <h2>Contact Us</h2>
+    <input id="contactName" placeholder="Your Name">
+    <input id="contactEmail" placeholder="Your Email">
+    <input id="contactMessage" placeholder="Your Message">
+    <button id="contactSend">Send Message 📩</button>
+</div>
 
-<script>
+<div class="container" id="login">
+    <h2>Login</h2>
+    <input id="loginUsername" placeholder="Username">
+    <input type="password" id="loginPassword" placeholder="Password">
+    <button id="loginBtn">Login 🔐</button>
+</div>
+
+<div class="container" id="signup">
+    <h2>Sign Up</h2>
+    <input id="signupName" placeholder="Full Name">
+    <input id="signupEmail" placeholder="Email">
+    <input type="password" id="signupPassword" placeholder="Password">
+    <button id="signupBtn">Register ✍️</button>
+    <p>Recommendation: at least 8 characters with a number 🔑</p>
+</div>
+
+<div class="container hidden" id="dashboardAdmin">
+    <h2>Admin Dashboard</h2>
+    <p>Pending Approvals, Chat Monitoring, HFL Structure</p>
+</div>
+
+<div class="container hidden" id="chatContainer">
+    <h2>HFL Members Chat 💬</h2>
+    <div class="chat-container" id="chatMessages"></div>
+    <input id="chatInput" placeholder="Type a message">
+    <button id="chatSend">Send</button>
+</div>
+
+<script type="module">
+// Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, collection, doc, setDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
+  authDomain: "hflsystem.firebaseapp.com",
+  projectId: "hflsystem",
+  storageBucket: "hflsystem.firebasestorage.app",
+  messagingSenderId: "469775027908",
+  appId: "1:469775027908:web:f3501f10942f58ba18c391"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Certificate
 const canvas = document.getElementById("certCanvas");
 const ctx = canvas.getContext("2d");
 
-// --- Generate Serial ---
-const genSerial = () => "HFL-" + Math.floor(Math.random()*999999);
+function genSerial() { return "HFL-" + Math.floor(Math.random()*999999); }
 
-// --- Draw Binary Figure ---
-const drawBinaryFigure = () => {
+function drawBinaryFigure(){
     ctx.save();
-
-    // Frame
     ctx.strokeStyle="#003366";
     ctx.lineWidth=2;
     ctx.strokeRect(80,180,160,200);
-
-    // Binary "figure"
     ctx.font="10px monospace";
     ctx.fillStyle="rgba(0,0,0,0.4)";
     let y=200;
@@ -80,89 +243,55 @@ const drawBinaryFigure = () => {
         ctx.fillText(line,90,y);
         y+=10;
     }
-
-    // Fake blur overlay
     ctx.fillStyle="rgba(255,255,255,0.6)";
     ctx.fillRect(80,180,160,200);
-
     ctx.restore();
-};
+}
 
-// --- Render Certificate ---
-const render = (name,serial)=>{
+function renderCertificate(name, serial){
     ctx.clearRect(0,0,800,560);
-
-    // Paper background
     ctx.fillStyle="#F9F9F7";
     ctx.fillRect(0,0,800,560);
-
-    // Outer border
     ctx.strokeStyle="#d4af37";
     ctx.lineWidth=10;
     ctx.strokeRect(20,20,760,520);
-
-    // Inner border
     ctx.lineWidth=2;
     ctx.strokeRect(40,40,720,480);
-
-    // Title
     ctx.fillStyle="#000";
     ctx.textAlign="center";
-    ctx.font="bold 42px serif";
+    ctx.font="bold 42px 'Libre Baskerville', serif";
     ctx.fillText("HUMAN FREE LIGHT",400,100);
-
-    ctx.font="22px sans-serif";
+    ctx.font="22px 'Roboto', sans-serif";
     ctx.fillText("OFFICIAL CERTIFICATE",400,140);
-
-    // Name
-    ctx.font="bold 40px serif";
+    ctx.font="bold 40px 'Libre Baskerville', serif";
     ctx.fillText(name,400,260);
-
-    // Binary figure
     drawBinaryFigure();
-
-    // Message
     ctx.font="bold 16px monospace";
     ctx.fillStyle="#003366";
     ctx.fillText("KEEP YOUR IDENTITY PRIVATE",400,350);
-
-    // Serial
     ctx.font="14px monospace";
     ctx.fillStyle="#666";
     ctx.fillText("Serial: "+serial,400,480);
+}
+
+document.getElementById("generateBtn").onclick = () => {
+    const name = document.getElementById("name").value;
+    if(!name) return alert("Enter your name!");
+    const serial = genSerial();
+    renderCertificate(name, serial);
+    document.getElementById("downloadBtn").classList.remove("hidden");
 };
 
-// --- Generate Certificate ---
-document.getElementById("btn").onclick=()=>{
-    const name=document.getElementById("name").value;
-    if(!name) return alert("Please enter your full name.");
-
-    const serial=genSerial();
-    render(name,serial);
-
-    document.getElementById("download").classList.remove("hidden");
-};
-
-// --- Download PDF ---
-document.getElementById("download").onclick=()=>{
-    const pdf = new jspdf.jsPDF('landscape','px',[800,560]);
+document.getElementById("downloadBtn").onclick = () => {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('landscape','px',[800,560]);
     pdf.addImage(canvas.toDataURL(),'PNG',0,0,800,560);
     pdf.save("HFL_CERT.pdf");
 };
 
-// --- Admin Login ---
-document.getElementById('adminBtn').onclick = () => {
-    const secret = prompt("Enter admin secret key:");
-    if(secret === "HFL_SUPER_SECRET"){ // <-- שנה כאן את הסיסמה שלך
-        window.location.href = "admin.html";
-    } else {
-        alert("Access denied!");
-    }
-};
-
-// --- Initial Render ---
-render("Sample Name","HFL-XXXX");
+// Placeholder for chat, dashboard, signup/login logic
 </script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 </html>
