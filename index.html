@@ -3,197 +3,239 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HFL Chat + AI</title>
+<title>HFL SUS Chat</title>
 <style>
-  /* SUS Dark Modern */
-  body { font-family: 'Segoe UI', sans-serif; background:#0d1117; color:#c9d1d9; margin:0; }
-  header { background:#161b22; padding:20px; display:flex; justify-content:space-between; align-items:center; }
-  header h1 { margin:0; color:#58a6ff; }
-  nav button { background:#238636; color:white; border:none; padding:8px 16px; margin-left:8px; cursor:pointer; border-radius:6px; transition:0.3s; }
-  nav button:hover { background:#2ea043; }
-  main { padding:20px; }
-  .card { background:#161b22; padding:20px; margin-bottom:16px; border-radius:10px; box-shadow: 0 0 10px #58a6ff33; }
-  input, button { padding:10px; border-radius:6px; border:none; margin:5px 0; width:100%; }
-  input[type=password] { font-family: 'Courier New', monospace; }
-  .success { color:#2ea043; font-weight:bold; transition:0.5s; }
-  .error { color:#f85149; font-weight:bold; transition:0.5s; }
-  .chat-box { background:#0d1117; border:1px solid #30363d; border-radius:10px; padding:10px; max-height:300px; overflow-y:auto; }
-  .chat-message { margin-bottom:10px; padding:6px; border-radius:6px; background:#21262d; transition:0.3s; }
-  .online-dot { display:inline-block; width:10px; height:10px; border-radius:50%; background:#2ea043; margin-right:6px; }
-  .user-list { margin-top:10px; padding:10px; border:1px solid #30363d; border-radius:10px; background:#161b22; }
+/* ====== RESET & BASE ====== */
+* {margin:0;padding:0;box-sizing:border-box;font-family:sans-serif;}
+body {background:#0d1117;color:#c9d1d9;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;}
+
+/* ====== HEADER / NAV ====== */
+header {width:100%;background:#161b22;padding:1rem 0;text-align:center;font-size:1.5rem;font-weight:bold;color:#58a6ff;}
+
+/* ====== CONTAINERS ====== */
+.container {width:95%;max-width:900px;margin-top:1rem;}
+
+/* ====== CARD LAYOUT ====== */
+.card {background:#161b22;padding:1rem;margin:1rem 0;border-radius:12px;box-shadow:0 0 20px rgba(88,166,255,0.2);}
+.card h2 {margin-bottom:0.5rem;color:#58a6ff;}
+.card input, .card button, .card textarea {width:100%;padding:0.7rem;margin:0.3rem 0;border-radius:8px;border:none;}
+.card button {background:#238636;color:white;font-weight:bold;cursor:pointer;transition:0.2s;}
+.card button:hover {background:#2ea043;transform:scale(1.05);}
+.card input:focus, .card textarea:focus {outline:none;box-shadow:0 0 8px #58a6ff;}
+
+/* ====== Chat & Messages ====== */
+.chat-box {height:300px;overflow-y:auto;background:#0d1117;padding:1rem;border-radius:12px;border:1px solid #30363d;}
+.message {margin:0.5rem 0;padding:0.5rem 0.7rem;border-radius:12px;max-width:80%;display:inline-block;}
+.message.self {background:#238636;color:white;align-self:flex-end;}
+.message.other {background:#1f6feb;color:white;align-self:flex-start;}
+
+/* ====== Online List ====== */
+.online-list {display:flex;flex-wrap:wrap;}
+.user-card {background:#161b22;padding:0.5rem 1rem;margin:0.5rem;border-radius:12px;cursor:pointer;transition:0.2s;display:flex;align-items:center;}
+.user-card:hover {background:#21262d;}
+.user-card img {width:40px;height:40px;border-radius:50%;margin-right:0.5rem;}
+.online-dot {width:10px;height:10px;border-radius:50%;background:#2ea043;margin-left:auto;animation:pulse 1.5s infinite;}
+@keyframes pulse {0% {transform:scale(0.8);}50% {transform:scale(1.2);}100% {transform:scale(0.8);}}
+
+/* ====== SUCCESS ANIMATION ====== */
+.success {background:#2ea043;color:white;padding:0.5rem;margin:0.5rem 0;border-radius:8px;text-align:center;animation:fadeIn 1s;}
+@keyframes fadeIn {from {opacity:0;} to {opacity:1;}}
+
+/* ====== HIDDEN ====== */
+.hidden {display:none;}
 </style>
 </head>
 <body>
 
-<header>
-  <h1>HFL Chat</h1>
-  <nav>
-    <button onclick="showSection('home')">Home</button>
-    <button onclick="showSection('signup')">Sign Up</button>
-    <button onclick="showSection('login')">Login</button>
-    <button onclick="showSection('chat')">Chat</button>
-  </nav>
-</header>
+<header>HFL SUS Chat Platform</header>
+<div class="container">
 
-<main>
-  <!-- Home -->
-  <section id="home">
-    <div class="card">
-      <h2>Welcome to Human Free Light HFL</h2>
-      <p>Our mission: human freedom and creating a civil alternative organization. Join us to shape a self-governing community. 🌟</p>
+  <!-- ====== REGISTRATION ====== -->
+  <div id="registerCard" class="card">
+    <h2>Sign Up</h2>
+    <input type="text" id="regName" placeholder="Full Name">
+    <input type="email" id="regEmail" placeholder="Email">
+    <input type="password" id="regPass" placeholder="Password">
+    <input type="file" id="regAvatar" accept="image/*">
+    <button id="registerBtn">Register</button>
+    <div id="regMsg" class="success hidden"></div>
+    <p>Already have an account? <span style="color:#58a6ff;cursor:pointer;" id="gotoLogin">Login</span></p>
+  </div>
+
+  <!-- ====== LOGIN ====== -->
+  <div id="loginCard" class="card hidden">
+    <h2>Login</h2>
+    <input type="email" id="loginEmail" placeholder="Email">
+    <input type="password" id="loginPass" placeholder="Password">
+    <button id="loginBtn">Login</button>
+    <div id="loginMsg" class="success hidden"></div>
+    <p>No account? <span style="color:#58a6ff;cursor:pointer;" id="gotoRegister">Sign Up</span></p>
+  </div>
+
+  <!-- ====== PROFILE / CHAT ====== -->
+  <div id="mainCard" class="card hidden">
+    <h2>Welcome, <span id="userName">User</span></h2>
+    <img id="userAvatar" src="" alt="Avatar" style="width:80px;height:80px;border-radius:50%;margin-bottom:0.5rem;">
+    <div>
+      <input type="text" id="statusInput" placeholder="Update your status">
+      <button id="updateStatusBtn">Update Status</button>
     </div>
-  </section>
 
-  <!-- Sign Up -->
-  <section id="signup" style="display:none">
-    <div class="card">
-      <h2>Sign Up</h2>
-      <input type="text" id="signup-name" placeholder="Your Name">
-      <input type="email" id="signup-email" placeholder="Email">
-      <input type="password" id="signup-password" placeholder="Password (min 8 chars + number)">
-      <button onclick="signUp()">Register</button>
-      <p id="signup-msg"></p>
-    </div>
-  </section>
+    <h3>Friends Online</h3>
+    <div class="online-list" id="onlineList"></div>
 
-  <!-- Login -->
-  <section id="login" style="display:none">
-    <div class="card">
-      <h2>Login</h2>
-      <input type="email" id="login-email" placeholder="Email">
-      <input type="password" id="login-password" placeholder="Password">
-      <button onclick="login()">Login</button>
-      <p id="login-msg"></p>
-    </div>
-  </section>
+    <h3>Public Chat</h3>
+    <div class="chat-box" id="chatBox"></div>
+    <input type="text" id="chatInput" placeholder="Type a message">
+    <button id="sendChatBtn">Send</button>
+  </div>
 
-  <!-- Chat -->
-  <section id="chat" style="display:none">
-    <div class="card">
-      <h2>Chat</h2>
-      <div class="chat-box" id="chat-box"></div>
-      <input type="text" id="chat-input" placeholder="Type a message">
-      <button onclick="sendMessage()">Send</button>
-      <div class="user-list" id="user-list"></div>
-    </div>
-  </section>
-</main>
+</div>
 
+<!-- ====== Firebase SDKs ====== -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-  import { getDatabase, ref, push, set, onChildAdded, onValue } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+// Firebase Config
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-auth.js";
+import { getDatabase, ref, set, push, onValue, update } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-database.js";
+import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-storage.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
-    authDomain: "hflsystem.firebaseapp.com",
-    databaseURL: "https://hflsystem-default-rtdb.firebaseio.com",
-    projectId: "hflsystem",
-    storageBucket: "hflsystem.firebasestorage.app",
-    messagingSenderId: "469775027908",
-    appId: "1:469775027908:web:f3501f10942f58ba18c391"
-  };
+// Your Firebase Config
+const firebaseConfig = {
+  apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
+  authDomain: "hflsystem.firebaseapp.com",
+  databaseURL: "https://hflsystem-default-rtdb.firebaseio.com",
+  projectId: "hflsystem",
+  storageBucket: "hflsystem.firebasestorage.app",
+  messagingSenderId: "469775027908",
+  appId: "1:469775027908:web:f3501f10942f58ba18c391"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth();
+const db = getDatabase();
+const storage = getStorage();
 
-  let currentUser = null;
+// ====== NAVIGATION ======
+const registerCard = document.getElementById('registerCard');
+const loginCard = document.getElementById('loginCard');
+const mainCard = document.getElementById('mainCard');
 
-  function showSection(id) {
-    document.querySelectorAll('main section').forEach(s => s.style.display='none');
-    document.getElementById(id).style.display='block';
-  }
+document.getElementById('gotoLogin').addEventListener('click', ()=>{registerCard.classList.add('hidden'); loginCard.classList.remove('hidden');});
+document.getElementById('gotoRegister').addEventListener('click', ()=>{loginCard.classList.add('hidden'); registerCard.classList.remove('hidden');});
 
-  // Sign Up
-  window.signUp = function() {
-    const name = document.getElementById('signup-name').value;
-    const email = document.getElementById('signup-email').value;
-    const password = document.getElementById('signup-password').value;
-    const msg = document.getElementById('signup-msg');
-
-    if(name && email && password.length>=8 && /\d/.test(password)){
-      const usersRef = ref(db, 'users');
-      const newUserRef = push(usersRef);
-      set(newUserRef, { name, email, password, online:false });
-      msg.textContent = "✅ Registered successfully!";
-      msg.className = 'success';
+// ====== REGISTRATION ======
+document.getElementById('registerBtn').addEventListener('click', ()=>{
+  const name = document.getElementById('regName').value;
+  const email = document.getElementById('regEmail').value;
+  const pass = document.getElementById('regPass').value;
+  const avatarFile = document.getElementById('regAvatar').files[0];
+  
+  createUserWithEmailAndPassword(auth, email, pass)
+  .then(userCredential => {
+    const user = userCredential.user;
+    sendEmailVerification(user).then(()=>console.log("Verification sent"));
+    
+    const avatarRef = sRef(storage, 'avatars/' + user.uid);
+    if(avatarFile){
+      uploadBytes(avatarRef, avatarFile).then(()=>getDownloadURL(avatarRef)
+        .then(url=>{
+          updateProfile(user,{displayName:name, photoURL:url});
+          set(ref(db,'users/'+user.uid),{name,email,avatar:url,status:"Online"});
+          document.getElementById('regMsg').textContent="Registered! Verify Email✅"; 
+          document.getElementById('regMsg').classList.remove('hidden');
+        })
+      );
     } else {
-      msg.textContent = "⚠️ Invalid input or weak password";
-      msg.className = 'error';
+      updateProfile(user,{displayName:name});
+      set(ref(db,'users/'+user.uid),{name,email,avatar:"",status:"Online"});
+      document.getElementById('regMsg').textContent="Registered! Verify Email✅"; 
+      document.getElementById('regMsg').classList.remove('hidden');
     }
-  };
+  })
+  .catch(err=>alert(err.message));
+});
 
-  // Login
-  window.login = function() {
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    const msg = document.getElementById('login-msg');
-    const usersRef = ref(db, 'users');
+// ====== LOGIN ======
+document.getElementById('loginBtn').addEventListener('click', ()=>{
+  const email = document.getElementById('loginEmail').value;
+  const pass = document.getElementById('loginPass').value;
+  
+  signInWithEmailAndPassword(auth,email,pass)
+  .then(userCredential=>{
+    const user = userCredential.user;
+    if(!user.emailVerified) {alert("Verify your email first!"); return;}
+    loginCard.classList.add('hidden');
+    mainCard.classList.remove('hidden');
+    loadProfile(user);
+    listenOnlineUsers();
+    listenChat();
+  })
+  .catch(err=>alert(err.message));
+});
 
-    onChildAdded(usersRef, snapshot => {
-      const u = snapshot.val();
-      if(u.email===email && u.password===password){
-        currentUser = snapshot.key;
-        msg.textContent = "✅ Login successful!";
-        msg.className='success';
-        set(ref(db,'users/'+currentUser+'/online'), true);
-        showSection('chat');
-        updateUserList();
-      }
+// ====== LOAD PROFILE ======
+function loadProfile(user){
+  document.getElementById('userName').textContent=user.displayName;
+  document.getElementById('userAvatar').src=user.photoURL || "https://via.placeholder.com/80";
+}
+
+// ====== UPDATE STATUS ======
+document.getElementById('updateStatusBtn').addEventListener('click', ()=>{
+  const status = document.getElementById('statusInput').value;
+  const user = auth.currentUser;
+  update(ref(db,'users/'+user.uid),{status});
+  alert("Status Updated✅");
+});
+
+// ====== ONLINE USERS ======
+function listenOnlineUsers(){
+  const onlineList = document.getElementById('onlineList');
+  onValue(ref(db,'users/'), snapshot=>{
+    onlineList.innerHTML='';
+    snapshot.forEach(snap=>{
+      const u = snap.val();
+      const uid = snap.key;
+      const card = document.createElement('div');
+      card.classList.add('user-card');
+      card.innerHTML=`<img src="${u.avatar||'https://via.placeholder.com/40'}" alt="Avatar"><span>${u.name}</span>`;
+      if(u.status==="Online"){card.innerHTML+=`<div class="online-dot"></div>`;}
+      onlineList.appendChild(card);
     });
-  };
-
-  // Chat
-  window.sendMessage = function() {
-    const input = document.getElementById('chat-input');
-    const text = input.value;
-    if(!text) return;
-    const messagesRef = ref(db, 'messages');
-    const newMsgRef = push(messagesRef);
-    set(newMsgRef, { user: currentUser || 'AI', text, timestamp: Date.now() });
-    input.value='';
-  };
-
-  // Show chat messages
-  const chatBox = document.getElementById('chat-box');
-  const messagesRef = ref(db, 'messages');
-  onChildAdded(messagesRef, snapshot => {
-    const m = snapshot.val();
-    const div = document.createElement('div');
-    div.className = 'chat-message';
-    div.textContent = `${m.user}: ${m.text}`;
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
-
-    // AI bot responds automatically to greetings
-    if(m.user!==currentUser && /hello|hi|hey/i.test(m.text)){
-      setTimeout(()=>sendAImessage("Hello! Welcome to HFL chat 🌟"),500);
-    }
   });
+}
 
-  function sendAImessage(msg){
-    const messagesRef = ref(db, 'messages');
-    const newMsgRef = push(messagesRef);
-    set(newMsgRef, { user:'HFL AI', text:msg, timestamp: Date.now() });
-  }
+// ====== CHAT ======
+const chatBox = document.getElementById('chatBox');
+document.getElementById('sendChatBtn').addEventListener('click', ()=>{
+  const user = auth.currentUser;
+  const msg = document.getElementById('chatInput').value;
+  if(!msg) return;
+  push(ref(db,'chat/'),{uid:user.uid,name:user.displayName,msg,avatar:user.photoURL||"",timestamp:Date.now()});
+  document.getElementById('chatInput').value='';
+});
 
-  // Update online users
-  function updateUserList(){
-    const userListDiv = document.getElementById('user-list');
-    userListDiv.innerHTML='';
-    const usersRef = ref(db, 'users');
-    onValue(usersRef, snapshot=>{
-      const users = snapshot.val();
-      for(const key in users){
-        if(users[key].online){
-          const div = document.createElement('div');
-          div.innerHTML = `<span class="online-dot"></span>${users[key].name}`;
-          userListDiv.appendChild(div);
-        }
-      }
+function listenChat(){
+  onValue(ref(db,'chat/'), snapshot=>{
+    chatBox.innerHTML='';
+    snapshot.forEach(snap=>{
+      const c = snap.val();
+      const div = document.createElement('div');
+      div.classList.add('message');
+      div.classList.add(c.uid===auth.currentUser.uid?"self":"other");
+      div.innerHTML=`<strong>${c.name}:</strong> ${c.msg}`;
+      chatBox.appendChild(div);
     });
-  }
+    chatBox.scrollTop = chatBox.scrollHeight;
+  });
+}
 
+// ====== PRESENCE ======
+onAuthStateChanged(auth, user=>{
+  if(user) update(ref(db,'users/'+user.uid),{status:"Online"});
+  window.addEventListener('beforeunload', ()=>{if(user) update(ref(db,'users/'+user.uid),{status:"Offline"});});
+});
 </script>
-
 </body>
 </html>
