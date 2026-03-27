@@ -3,22 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>HFL - Human Free Light</title>
-
-<style>
-body{margin:0;font-family:sans-serif;background:#0b0f1a;color:#fff;}
-nav{display:flex;gap:10px;background:#111;padding:10px;}
-button{cursor:pointer;border:none;padding:10px;border-radius:6px;}
-.primary{background:#00d2ff;color:#000;font-weight:bold;}
-.page{display:none;padding:20px;}
-.active{display:block;}
-input{padding:8px;margin:5px 0;border-radius:6px;border:none;}
-.card{background:#1c2333;padding:15px;margin:10px 0;border-radius:10px;}
-#counter{font-size:50px;text-align:center;animation:pulse 2s infinite;}
-@keyframes pulse{50%{transform:scale(1.1)}}
-.success{color:#00ff9d;}
-.online{width:10px;height:10px;background:#0f0;border-radius:50%;display:inline-block;}
-</style>
-
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -30,168 +15,53 @@ input{padding:8px;margin:5px 0;border-radius:6px;border:none;}
 <button onclick="go('network')">🌐 Network</button>
 </nav>
 
-<!-- HOME -->
 <div id="home" class="page active">
 <h1>HFL - Human Free Light</h1>
 <div id="counter">0</div>
 <p>Active Agents ⚡</p>
 </div>
 
-<!-- ABOUT -->
 <div id="about" class="page">
 <h2>About HFL</h2>
-<p>
-HFL is a sovereign human movement.  
-Built to free individuals from imposed structures.  
-A temporary civil system that exists only to restore freedom —  
-and dissolve once independence is achieved.
-</p>
+<p>HFL is a sovereign human movement. Built to free individuals from imposed structures. Temporary civil system that exists only to restore freedom and dissolve once independence is achieved.</p>
 </div>
 
-<!-- JOIN -->
 <div id="join" class="page">
 <h2>Join HFL 🚀</h2>
 <input id="n" placeholder="Name">
 <input id="e" placeholder="Email">
 <input id="p" type="password" placeholder="Password (min 8 + number)">
-<button onclick="signup()" class="primary">Join</button>
+<button onclick="signup()">Join</button>
 <p id="joinMsg"></p>
 </div>
 
-<!-- LOGIN -->
 <div id="login" class="page">
 <h2>Access</h2>
 <h3>Agent</h3>
 <input id="le" placeholder="Email">
 <input id="lp" type="password" placeholder="Password">
-<button onclick="login()" class="primary">Enter</button>
+<button onclick="login()">Enter</button>
 
 <h3>Admin</h3>
-<button onclick="admin()" class="primary">Admin Login</button>
+<button onclick="admin()">Admin Login</button>
 <p id="logMsg"></p>
 </div>
 
-<!-- NETWORK -->
 <div id="network" class="page">
 <h2>HFL Network 🌐</h2>
 <div id="chat"></div>
 <input id="m" placeholder="Message">
-<button onclick="send()" class="primary">Send</button>
+<button onclick="send()">Send</button>
 </div>
 
-<!-- ADMIN PANEL -->
 <div id="adminPanel" class="page">
 <h2>Admin ⚡</h2>
-
 <h3>Members</h3>
 <div id="users"></div>
-
 <h3>Manual Boost</h3>
-<button onclick="boost()" class="primary">+ Add Members</button>
-
+<button onclick="boost()">+ Add Members</button>
 </div>
 
-<script type="module">
-
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import {getFirestore,collection,addDoc,getDocs,updateDoc,doc} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
-  authDomain: "hflsystem.firebaseapp.com",
-  databaseURL: "https://hflsystem-default-rtdb.firebaseio.com",
-  projectId: "hflsystem",
-  storageBucket: "hflsystem.firebasestorage.app",
-  messagingSenderId: "469775027908",
-  appId: "1:469775027908:web:f3501f10942f58ba18c391"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-let currentUser=null;
-
-window.go=(id)=>{
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-}
-
-window.signup=async()=>{
-let name=n.value,email=e.value,pass=p.value;
-
-if(pass.length<8 || !/\d/.test(pass)){
-joinMsg.innerText="⚠️ Password must be 8+ chars and include a number";
-return;
-}
-
-await addDoc(collection(db,"users"),{
-name,email,pass,approved:false,role:"agent"
-});
-
-joinMsg.innerText="✅ Request sent!";
-}
-
-window.login=async()=>{
-let q=await getDocs(collection(db,"users"));
-let found=false;
-q.forEach(docu=>{
-let d=docu.data();
-if(d.email==le.value && d.pass==lp.value && d.approved){
-currentUser=d;
-found=true;
-go("network");
-}
-});
-if(!found) logMsg.innerText="❌ Not approved or wrong credentials";
-}
-
-window.admin=()=>{
-let u=prompt("Username"),p=prompt("Password");
-if(u=="ADMIN" && p=="HFLorg"){
-go("adminPanel");
-loadUsers();
-}
-}
-
-async function loadUsers(){
-let q=await getDocs(collection(db,"users"));
-let html="";
-q.forEach(d=>{
-let data=d.data();
-html+=`
-<div class="card">
-${data.name} - ${data.approved?"✅":"⏳"}
-<button onclick="approve('${d.id}')">Approve</button>
-</div>`;
-});
-users.innerHTML=html;
-}
-
-window.approve=async(id)=>{
-await updateDoc(doc(db,"users",id),{approved:true});
-loadUsers();
-}
-
-window.send=()=>{
-let div=document.createElement("div");
-div.innerHTML=`<span class="online"></span> ${m.value}`;
-chat.appendChild(div);
-}
-
-window.boost=()=>{
-let c=document.getElementById("counter");
-c.innerText=parseInt(c.innerText)+1;
-}
-
-</script>
+<script type="module" src="script.js"></script>
 </body>
 </html>
