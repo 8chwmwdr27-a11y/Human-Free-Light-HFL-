@@ -3,35 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HFL Social Live</title>
+<title>HFL Social Full</title>
 <style>
-body {font-family:'Segoe UI',sans-serif;background:#0a0f1a;color:#fff;margin:0;padding:0;}
-header{background:#0d1b3a;padding:1em;text-align:center;font-size:1.5em;font-weight:bold;color:#00f6ff;box-shadow:0 4px 6px rgba(0,0,0,0.3);}
-main{display:flex;flex-direction:column;align-items:center;padding:1em;}
-.card{background:#12192b;padding:1em;margin:1em 0;border-radius:10px;width:90%;max-width:600px;box-shadow:0 4px 10px rgba(0,0,0,0.5);transition:transform 0.3s ease;}
-.card:hover{transform:scale(1.02);}
-input,button,textarea{width:100%;padding:0.8em;margin:0.5em 0;border-radius:8px;border:none;font-size:1em;}
-input,textarea{background:#0d1b3a;color:#fff;}
-button{background:#00f6ff;color:#0a0f1a;font-weight:bold;cursor:pointer;transition:0.3s;}
-button:hover{background:#00c8d8;}
-.chat-box{background:#0d1b3a;padding:0.5em;height:300px;overflow-y:auto;border-radius:8px;margin-top:1em;}
-.message{margin:0.5em 0;display:flex;align-items:center;animation:fadeIn 0.5s;}
-.avatar{width:35px;height:35px;background:#00f6ff;border-radius:50%;display:flex;justify-content:center;align-items:center;font-weight:bold;margin-right:0.5em;color:#0a0f1a;}
-.online-dot{width:10px;height:10px;border-radius:50%;background:#00ff88;display:inline-block;margin-left:5px;}
-.friend-list{background:#0d1b3a;padding:0.5em;border-radius:8px;margin-top:1em;max-height:150px;overflow-y:auto;}
-.friend-item{padding:0.3em 0;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #222;}
-.story-container{display:flex;overflow-x:auto;margin:0.5em 0;}
-.story{min-width:60px;height:60px;border-radius:50%;margin-right:0.5em;display:flex;justify-content:center;align-items:center;color:#0a0f1a;font-weight:bold;cursor:pointer;transition:0.3s;overflow:hidden;}
-.story img{width:100%;height:100%;object-fit:cover;}
-.story:hover{transform:scale(1.2);}
-.post{background:#0d1b3a;padding:0.5em;margin:0.5em 0;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.4);}
-@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+/* =============================
+   GLOBAL STYLES
+============================= */
+body {margin:0;padding:0;font-family:'Segoe UI',sans-serif;background:#f0f2f5;color:#333;}
+header{display:none;}
+main{display:flex;flex-direction:column;align-items:center;width:100%;max-width:500px;margin:0 auto;position:relative;}
+.card{background:#fff;padding:1em;margin:1em 0;border-radius:15px;box-shadow:0 3px 8px rgba(0,0,0,0.2);width:95%;}
+input,button,textarea{width:100%;padding:0.7em;margin:0.5em 0;border-radius:8px;border:1px solid #ccc;font-size:1em;}
+button{background:#ff6b6b;color:#fff;font-weight:bold;cursor:pointer;transition:0.3s;}
+button:hover{background:#ff4757;}
 textarea{resize:none;}
+.avatar{width:40px;height:40px;border-radius:50%;margin-right:0.5em;display:flex;justify-content:center;align-items:center;font-weight:bold;color:#fff;background:#1e90ff;}
+.message{display:flex;align-items:flex-start;margin:0.5em 0;}
+.chat-box{height:300px;overflow-y:auto;padding:0.5em;border:1px solid #ccc;border-radius:10px;background:#f9f9f9;}
+.friend-list{max-height:150px;overflow-y:auto;}
+.friend-item{display:flex;justify-content:space-between;align-items:center;padding:0.3em 0;border-bottom:1px solid #eee;}
+.story-container{display:flex;overflow-x:auto;margin:0.5em 0;}
+.story{width:60px;height:60px;border-radius:50%;margin-right:0.5em;overflow:hidden;cursor:pointer;}
+.story img{width:100%;height:100%;object-fit:cover;}
+.post{padding:0.5em;margin:0.5em 0;border-radius:10px;background:#f7f7f7;}
+nav{position:fixed;bottom:0;left:0;width:100%;background:#fff;display:flex;justify-content:space-around;padding:0.5em 0;border-top:1px solid #ccc;}
+nav button{background:none;color:#333;font-weight:bold;font-size:0.9em;width:100%;border:none;cursor:pointer;}
+nav button.active{color:#ff6b6b;}
+.hidden{display:none;}
+.profile-pic{width:60px;height:60px;border-radius:50%;margin-bottom:0.5em;}
 </style>
 </head>
 <body>
 
-<header>HFL Social Live</header>
 <main>
 
 <!-- Auth -->
@@ -44,57 +46,63 @@ textarea{resize:none;}
 <p id="auth-msg"></p>
 </div>
 
-<!-- App -->
-<div id="app" style="display:none;width:100%;max-width:600px;">
+<!-- APP -->
+<div id="app" class="hidden">
 
-<!-- Profile -->
-<div class="card" id="profile-card">
-<h3>פרופיל אישי</h3>
-<div>
-<img id="profile-pic" src="https://via.placeholder.com/60" alt="Profile" style="border-radius:50%;margin-bottom:0.5em;">
-<input type="text" id="username" placeholder="שם משתמש">
-<textarea id="bio" placeholder="ביוגרפיה קצרה"></textarea>
-<button id="update-profile">עדכן פרופיל</button>
-</div>
-</div>
-
-<!-- Stories -->
-<div class="card">
-<h3>סטוריז</h3>
-<div id="stories" class="story-container"></div>
-</div>
-
-<!-- Friends List -->
-<div class="card">
-<h3>רשימת חברים</h3>
-<div id="friends" class="friend-list"></div>
-</div>
-
-<!-- Posts -->
-<div class="card">
-<h3>פוסטים</h3>
+<!-- Pages -->
+<div id="page-home" class="card page">
+<h3>פיד</h3>
 <textarea id="new-post" placeholder="מה חדש?"></textarea>
 <button id="post-btn">פרסם</button>
 <div id="posts"></div>
 </div>
 
-<!-- Chat -->
-<div class="card">
+<div id="page-stories" class="card page hidden">
+<h3>סטוריז</h3>
+<div id="stories" class="story-container"></div>
+</div>
+
+<div id="page-friends" class="card page hidden">
+<h3>רשימת חברים</h3>
+<div id="friends" class="friend-list"></div>
+</div>
+
+<div id="page-chat" class="card page hidden">
 <h3>צ׳אט ציבורי</h3>
 <div class="chat-box" id="chat-box"></div>
 <input type="text" id="chat-input" placeholder="כתוב הודעה...">
 <button id="send-btn">שלח</button>
-<button id="logout-btn" style="background:#ff5050;">התנתק</button>
+</div>
+
+<div id="page-profile" class="card page hidden">
+<h3>פרופיל אישי</h3>
+<img id="profile-pic" src="https://via.placeholder.com/60" class="profile-pic">
+<input type="text" id="username" placeholder="שם משתמש">
+<textarea id="bio" placeholder="ביוגרפיה קצרה"></textarea>
+<input type="file" id="profile-upload">
+<button id="update-profile">עדכן פרופיל</button>
+<button id="logout-btn" style="background:#ff6b6b;">התנתק</button>
 </div>
 
 </div>
+
+</main>
+
+<!-- Navigation -->
+<nav>
+<button id="nav-home" class="active">בית</button>
+<button id="nav-stories">סטוריז</button>
+<button id="nav-friends">חברים</button>
+<button id="nav-chat">צ׳אט</button>
+<button id="nav-profile">פרופיל</button>
+</nav>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getDatabase, ref, push, set, onValue, onChildAdded, update } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 
-// Firebase Config
+// ===== Firebase Config =====
 const firebaseConfig = {
   apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
   authDomain: "hflsystem.firebaseapp.com",
@@ -110,30 +118,61 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-// Elements
+// ===== Elements =====
+const authCard=document.getElementById("auth-card");
 const emailInput=document.getElementById("email");
 const passwordInput=document.getElementById("password");
 const loginBtn=document.getElementById("login-btn");
 const signupBtn=document.getElementById("signup-btn");
 const authMsg=document.getElementById("auth-msg");
-const authCard=document.getElementById("auth-card");
+
 const appDiv=document.getElementById("app");
+const pages=document.querySelectorAll(".page");
+
+const navHome=document.getElementById("nav-home");
+const navStories=document.getElementById("nav-stories");
+const navFriends=document.getElementById("nav-friends");
+const navChat=document.getElementById("nav-chat");
+const navProfile=document.getElementById("nav-profile");
+
+const postsDiv=document.getElementById("posts");
+const newPostInput=document.getElementById("new-post");
+const postBtn=document.getElementById("post-btn");
+
+const storiesDiv=document.getElementById("stories");
+const friendsDiv=document.getElementById("friends");
 
 const chatBox=document.getElementById("chat-box");
 const chatInput=document.getElementById("chat-input");
 const sendBtn=document.getElementById("send-btn");
-const logoutBtn=document.getElementById("logout-btn");
-
-const friendsDiv=document.getElementById("friends");
-const storiesDiv=document.getElementById("stories");
-const postsDiv=document.getElementById("posts");
 
 const profilePic=document.getElementById("profile-pic");
 const usernameInput=document.getElementById("username");
 const bioInput=document.getElementById("bio");
 const updateProfileBtn=document.getElementById("update-profile");
-const newPostInput=document.getElementById("new-post");
-const postBtn=document.getElementById("post-btn");
+const profileUpload=document.getElementById("profile-upload");
+const logoutBtn=document.getElementById("logout-btn");
+
+// ===== Navigation =====
+function showPage(pageId){
+pages.forEach(p=>p.classList.add("hidden"));
+document.getElementById(pageId).classList.remove("hidden");
+navHome.classList.remove("active");
+navStories.classList.remove("active");
+navFriends.classList.remove("active");
+navChat.classList.remove("active");
+navProfile.classList.remove("active");
+if(pageId=="page-home") navHome.classList.add("active");
+if(pageId=="page-stories") navStories.classList.add("active");
+if(pageId=="page-friends") navFriends.classList.add("active");
+if(pageId=="page-chat") navChat.classList.add("active");
+if(pageId=="page-profile") navProfile.classList.add("active");
+}
+navHome.onclick=()=>showPage("page-home");
+navStories.onclick=()=>showPage("page-stories");
+navFriends.onclick=()=>showPage("page-friends");
+navChat.onclick=()=>showPage("page-chat");
+navProfile.onclick=()=>showPage("page-profile");
 
 // ===== Auth =====
 signupBtn.onclick=()=>{
@@ -156,7 +195,7 @@ logoutBtn.onclick=()=>signOut(auth).then(()=>location.reload());
 // ===== Init User =====
 function initUser(user){
 authCard.style.display="none";
-appDiv.style.display="block";
+appDiv.classList.remove("hidden");
 set(ref(db,"users/"+user.uid),{
 email:user.email,
 online:true,
@@ -164,10 +203,11 @@ username:user.email.split("@")[0],
 profilePic:profilePic.src,
 bio:""
 });
-updateFriends();
-updateStories();
 updatePosts();
+updateStories();
+updateFriends();
 updateProfileUI(user);
+updateChat();
 }
 
 // ===== Profile =====
@@ -184,11 +224,22 @@ bioInput.value=data.bio||"";
 
 updateProfileBtn.onclick=()=>{
 const user=auth.currentUser;
+const reader=new FileReader();
+if(profileUpload.files[0]){
+reader.readAsDataURL(profileUpload.files[0]);
+reader.onload=()=>{ 
 update(ref(db,"users/"+user.uid),{
 username:usernameInput.value,
 bio:bioInput.value,
-profilePic:profilePic.src
+profilePic:reader.result
 });
+};
+}else{
+update(ref(db,"users/"+user.uid),{
+username:usernameInput.value,
+bio:bioInput.value
+});
+}
 };
 
 // ===== Posts =====
@@ -217,54 +268,14 @@ postsDiv.appendChild(div);
 });
 }
 
-// ===== Chat =====
-sendBtn.onclick=()=>{
-if(chatInput.value.trim()==="") return;
-const user=auth.currentUser;
-push(ref(db,"chat"),{
-text:chatInput.value,
-sender:user.email,
-avatar:user.email[0].toUpperCase(),
-time:new Date().toLocaleTimeString()
-});
-chatInput.value="";
-};
-
-onChildAdded(ref(db,"chat"),data=>{
-const msg=data.val();
-const div=document.createElement("div");
-div.className="message";
-div.innerHTML=`<div class="avatar">${msg.avatar}</div><div><b>${msg.sender}</b>: ${msg.text}</div>`;
-chatBox.appendChild(div);
-chatBox.scrollTop=chatBox.scrollHeight;
-});
-
-// ===== Friends =====
-function updateFriends(){
-onValue(ref(db,"users"),snapshot=>{
-friendsDiv.innerHTML="";
-snapshot.forEach(snap=>{
-const user=snap.val();
-const div=document.createElement("div");
-div.className="friend-item";
-div.innerHTML=`<span>${user.username||user.email}</span>${user.online?'<span class="online-dot"></span>':''}`;
-friendsDiv.appendChild(div);
-});
-});
-}
-
-// ===== Stories עם תמונות אמיתיות =====
+// ===== Stories =====
 const storyImages=[
 "https://picsum.photos/id/237/100",
 "https://picsum.photos/id/238/100",
 "https://picsum.photos/id/239/100",
 "https://picsum.photos/id/240/100",
 "https://picsum.photos/id/241/100",
-"https://picsum.photos/id/242/100",
-"https://picsum.photos/id/243/100",
-"https://picsum.photos/id/244/100",
-"https://picsum.photos/id/245/100",
-"https://picsum.photos/id/246/100"
+"https://picsum.photos/id/242/100"
 ];
 
 function updateStories(){
@@ -279,16 +290,61 @@ storiesDiv.appendChild(s);
 }
 }
 
-// ===== 5 Bots אמיתיים עם תמונות =====
-const bots = [
+// ===== Friends =====
+function updateFriends(){
+onValue(ref(db,"users"),snapshot=>{
+friendsDiv.innerHTML="";
+snapshot.forEach(snap=>{
+const user=snap.val();
+if(!user.email.startsWith("bot_")){
+const div=document.createElement("div");
+div.className="friend-item";
+div.innerHTML=`<span>${user.username||user.email}</span><button onclick="addFriend('${snap.key}')">הוסף</button>`;
+friendsDiv.appendChild(div);
+}
+});
+});
+}
+
+window.addFriend=(uid)=>{
+const current=auth.currentUser;
+set(ref(db,"users/"+current.uid+"/friends/"+uid),true);
+alert("המשתמש נוסף לחברים!");
+};
+
+// ===== Chat =====
+sendBtn.onclick=()=>{
+const user=auth.currentUser;
+if(chatInput.value.trim()==="") return;
+push(ref(db,"chat"),{
+text:chatInput.value,
+sender:user.username||user.email,
+avatar:user.username?user.username[0].toUpperCase():user.email[0].toUpperCase(),
+time:new Date().toLocaleTimeString()
+});
+chatInput.value="";
+};
+
+function updateChat(){
+onChildAdded(ref(db,"chat"),data=>{
+const msg=data.val();
+const div=document.createElement("div");
+div.className="message";
+div.innerHTML=`<div class="avatar">${msg.avatar}</div><div><b>${msg.sender}</b>: ${msg.text}</div>`;
+chatBox.appendChild(div);
+chatBox.scrollTop=chatBox.scrollHeight;
+});
+}
+
+// ===== Bots 5 =====
+const bots=[
 {name:"Alice",pic:"https://i.pravatar.cc/60?img=1"},
 {name:"Bob",pic:"https://i.pravatar.cc/60?img=2"},
 {name:"Charlie",pic:"https://i.pravatar.cc/60?img=3"},
 {name:"Dana",pic:"https://i.pravatar.cc/60?img=4"},
 {name:"Eli",pic:"https://i.pravatar.cc/60?img=5"}
 ];
-const botMessages = ["שלום לכולם!","איך הולך?","מישהו כאן?","איזה יום יפה היום","חחח","ממש מגניב!","אני מסכים"];
-
+const botMessages=["שלום לכולם!","איך הולך?","מישהו כאן?","איזה יום יפה היום","חחח","ממש מגניב!","אני מסכים"];
 bots.forEach(bot=>{
 function botAct(){
 const msg=botMessages[Math.floor(Math.random()*botMessages.length)];
@@ -300,7 +356,7 @@ setTimeout(botAct,Math.random()*10000+5000);
 botAct();
 });
 
-// ===== Monitor Auth State =====
+// ===== Monitor Auth =====
 onAuthStateChanged(auth,user=>{
 if(user){initUser(user);}
 });
