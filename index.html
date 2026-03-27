@@ -2,213 +2,182 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HFL ULTRA SYSTEM</title>
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-<!-- GSAP -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<title>HFL SYSTEM</title>
 
 <style>
-body{margin:0;font-family:sans-serif;background:#050816;color:#fff;}
-nav{display:flex;gap:15px;background:#0c1028;padding:12px;position:sticky;top:0;}
-nav a{color:#fff;text-decoration:none;font-weight:bold;}
-section{padding:20px;display:none;}
+body{margin:0;font-family:sans-serif;background:#0b0f1a;color:#fff;}
+nav{display:flex;gap:10px;background:#111;padding:10px;}
+button{cursor:pointer;border:none;padding:10px;border-radius:6px;}
+.primary{background:#00d2ff;}
+.page{display:none;padding:20px;}
 .active{display:block;}
-button{padding:10px;background:#00ffc8;border:none;color:#000;font-weight:bold;cursor:pointer;}
-input{padding:8px;margin:5px;}
-.chat{height:200px;overflow:auto;background:#111;padding:10px;}
-.user{border:1px solid #555;padding:5px;margin:3px;cursor:pointer;}
-.online{color:#0f0;}
-.pulse{animation:pulse 1s infinite;}
-@keyframes pulse{0%{opacity:1}50%{opacity:0.3}100%{opacity:1}}
-.toast{position:fixed;bottom:20px;right:20px;background:#0f0;color:#000;padding:10px;display:none;}
-</style>
-</head>
 
+.card{background:#1c2333;padding:15px;margin:10px 0;border-radius:10px;}
+
+#counter{font-size:50px;text-align:center;animation:pulse 2s infinite;}
+@keyframes pulse{50%{transform:scale(1.1)}}
+
+.success{color:#00ff9d;}
+
+.online{width:10px;height:10px;background:#0f0;border-radius:50%;display:inline-block;}
+</style>
+
+</head>
 <body>
 
 <nav>
-<a onclick="go('home')">Home</a>
-<a onclick="go('auth')">Login</a>
-<a onclick="go('chat')">Chat</a>
-<a onclick="go('hierarchy')">Hierarchy</a>
-<a onclick="go('legislation')">Legislation</a>
-<a onclick="go('profile')">Profile</a>
+<button onclick="go('home')">🏠</button>
+<button onclick="go('about')">🧠</button>
+<button onclick="go('join')">🚀</button>
+<button onclick="go('login')">🔐</button>
+<button onclick="go('network')">🌐</button>
 </nav>
 
-<section id="home" class="active">
-<h1>HFL SYSTEM 🌐</h1>
-Members: <span id="count">0</span>
-</section>
+<!-- HOME -->
+<div id="home" class="page active">
+<h1>HFL</h1>
+<div id="counter">0</div>
+<p>Active Agents ⚡</p>
+</div>
 
-<section id="auth">
-<h2>Login / Sign Up</h2>
-<input id="email" placeholder="Email">
-<input id="pass" type="password" placeholder="Password">
-<button onclick="login()">Login</button>
-<button onclick="signup()">Sign Up</button>
-</section>
+<!-- ABOUT -->
+<div id="about" class="page">
+<h2>About HFL</h2>
+<p>
+HFL is a sovereign human movement.  
+Built to free individuals from imposed structures.  
 
-<section id="chat">
-<h2>Global Chat 💬</h2>
-<div id="chatBox" class="chat"></div>
-<input id="msg"><button onclick="send()">Send</button>
-</section>
+A temporary civil system that exists only to restore freedom —  
+and dissolve once independence is achieved.
+</p>
+</div>
 
-<section id="hierarchy">
-<h2>Hierarchy 🧠</h2>
+<!-- JOIN -->
+<div id="join" class="page">
+<h2>Join HFL 🚀</h2>
+<input id="n" placeholder="Name">
+<input id="e" placeholder="Email">
+<input id="p" type="password" placeholder="Password (min 8 + number)">
+<button onclick="signup()" class="primary">Join</button>
+<p id="joinMsg"></p>
+</div>
+
+<!-- LOGIN -->
+<div id="login" class="page">
+<h2>Access</h2>
+
+<h3>Agent</h3>
+<input id="le">
+<input id="lp" type="password">
+<button onclick="login()">Enter</button>
+
+<h3>Admin</h3>
+<button onclick="admin()">Admin Login</button>
+
+<p id="logMsg"></p>
+</div>
+
+<!-- NETWORK -->
+<div id="network" class="page">
+<h2>HFL Network 🌐</h2>
+<div id="chat"></div>
+<input id="m">
+<button onclick="send()">Send</button>
+</div>
+
+<!-- ADMIN -->
+<div id="adminPanel" class="page">
+<h2>Admin ⚡</h2>
+
+<h3>Members</h3>
 <div id="users"></div>
-</section>
 
-<section id="legislation">
-<h2>Legislation ⚖️</h2>
-<button onclick="joinLaw()">Join</button>
-<div id="lawList"></div>
-</section>
+<h3>Manual Boost</h3>
+<button onclick="boost()">+ Add Members</button>
 
-<section id="profile">
-<h2>Personal Zone 🧬</h2>
-<div id="alliances"></div>
-<div id="actions"></div>
-</section>
+</div>
 
-<div id="toast" class="toast"></div>
+<script type="module">
 
-<script>
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import {getFirestore,collection,addDoc,getDocs,updateDoc,doc} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// Firebase
 const firebaseConfig = {
-apiKey:"YOUR_API_KEY",
-authDomain:"YOUR_PROJECT.firebaseapp.com",
-databaseURL:"https://YOUR_PROJECT.firebaseio.com",
-projectId:"YOUR_PROJECT"
+  apiKey:"PUT",
+  authDomain:"PUT",
+  projectId:"PUT"
 };
-firebase.initializeApp(firebaseConfig);
-const auth=firebase.auth();
-const db=firebase.database();
 
-// UI NAV
-function go(id){
-document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+
+let currentUser=null;
+
+window.go=(id)=>{
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
 document.getElementById(id).classList.add("active");
-gsap.from("#"+id,{opacity:0,y:30,duration:0.5});
 }
 
-// Toast
-function toast(msg){
-const t=document.getElementById("toast");
-t.innerText=msg;
-t.style.display="block";
-gsap.fromTo(t,{y:50},{y:0,duration:0.3});
-setTimeout(()=>t.style.display="none",2000);
-}
+window.signup=async()=>{
+let name=n.value,email=e.value,pass=p.value;
 
-// AUTH
-function signup(){
-const email=emailInput(),pass=passInput();
-auth.createUserWithEmailAndPassword(email,pass).then(r=>{
-db.ref("users/"+r.user.uid).set({email,role:"agent",online:true});
-toast("Joined HFL ✅");
-});
-}
-function login(){
-auth.signInWithEmailAndPassword(emailInput(),passInput()).then(r=>{
-db.ref("users/"+r.user.uid).update({online:true});
-toast("Connected ⚡");
-});
-}
-function emailInput(){return document.getElementById("email").value;}
-function passInput(){return document.getElementById("pass").value;}
-
-// CHAT
-function send(){
-const msg=document.getElementById("msg").value;
-const u=auth.currentUser;
-if(!u)return toast("Login first");
-db.ref("chat").push({uid:u.uid,msg});
-}
-db.ref("chat").on("child_added",s=>{
-const d=s.val();
-const div=document.createElement("div");
-div.innerText=d.msg;
-document.getElementById("chatBox").appendChild(div);
-gsap.from(div,{x:-20,opacity:0});
+await addDoc(collection(db,"users"),{
+name,email,pass,approved:false,role:"agent"
 });
 
-// USERS / HIERARCHY
-db.ref("users").on("value",snap=>{
-const data=snap.val()||{};
-document.getElementById("count").innerText=Object.keys(data).length;
-const box=document.getElementById("users");
-box.innerHTML="";
-for(let id in data){
-const u=data[id];
-const div=document.createElement("div");
-div.className="user pulse";
-div.innerHTML=`${u.email} <span class="${u.online?'online':''}">●</span>`;
-div.onclick=()=>userMenu(id);
-box.appendChild(div);
+joinMsg.innerText="Request sent ⚡";
+}
+
+window.login=async()=>{
+let q=await getDocs(collection(db,"users"));
+q.forEach(docu=>{
+let d=docu.data();
+if(d.email==le.value && d.pass==lp.value && d.approved){
+currentUser=d;
+go("network");
 }
 });
-
-// USER MENU (ALLIANCE / REPORT)
-function userMenu(uid){
-const action=prompt("1 Alliance\n2 Report");
-if(action==1){
-db.ref("alliances").push({from:auth.currentUser.uid,to:uid});
-toast("Alliance Sent 🔵");
 }
-if(action==2){
-db.ref("reports").push({from:auth.currentUser.uid,to:uid});
-toast("Reported ⚠️");
+
+window.admin=()=>{
+let u=prompt("user"),p=prompt("pass");
+if(u=="ADMIN" && p=="HFLorg"){
+go("adminPanel");
+loadUsers();
 }
 }
 
-// LEGISLATION
-function joinLaw(){
-const u=auth.currentUser;
-if(!u)return toast("Login");
-db.ref("laws").push({uid:u.uid});
-toast("Joined Law ⚖️");
+async function loadUsers(){
+let q=await getDocs(collection(db,"users"));
+let html="";
+q.forEach(d=>{
+let data=d.data();
+html+=`
+<div class="card">
+${data.name} - ${data.approved?"✅":"⏳"}
+<button onclick="approve('${d.id}')">Approve</button>
+</div>`;
+});
+users.innerHTML=html;
 }
-db.ref("laws").on("value",snap=>{
-const box=document.getElementById("lawList");
-box.innerHTML="";
-snap.forEach(s=>{
-const div=document.createElement("div");
-div.innerText=s.val().uid;
-box.appendChild(div);
-});
-});
 
-// PROFILE (ALLIANCES)
-db.ref("alliances").on("value",snap=>{
-const u=auth.currentUser;
-if(!u)return;
-const box=document.getElementById("alliances");
-box.innerHTML="<h3>Alliances</h3>";
-snap.forEach(s=>{
-const a=s.val();
-if(a.to==u.uid || a.from==u.uid){
-const div=document.createElement("div");
-div.innerText="Alliance Active";
-box.appendChild(div);
+window.approve=async(id)=>{
+await updateDoc(doc(db,"users",id),{approved:true});
+loadUsers();
 }
-});
-});
 
-// ONLINE STATUS
-auth.onAuthStateChanged(u=>{
-if(u){
-db.ref("users/"+u.uid).onDisconnect().update({online:false});
+window.send=()=>{
+let div=document.createElement("div");
+div.innerHTML=`<span class="online"></span> ${m.value}`;
+chat.appendChild(div);
 }
-});
+
+window.boost=()=>{
+let c=document.getElementById("counter");
+c.innerText=parseInt(c.innerText)+1;
+}
 
 </script>
+
 </body>
 </html>
