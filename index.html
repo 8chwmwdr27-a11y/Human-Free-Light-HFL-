@@ -3,33 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HFL Social Full</title>
+<title>HFL Social Ultimate Pro</title>
 <style>
-/* =============================
-   GLOBAL STYLES
-============================= */
-body {margin:0;padding:0;font-family:'Segoe UI',sans-serif;background:#f0f2f5;color:#333;}
-header{display:none;}
-main{display:flex;flex-direction:column;align-items:center;width:100%;max-width:500px;margin:0 auto;position:relative;}
-.card{background:#fff;padding:1em;margin:1em 0;border-radius:15px;box-shadow:0 3px 8px rgba(0,0,0,0.2);width:95%;}
+body{margin:0;padding:0;font-family:'Segoe UI',sans-serif;background:#f0f2f5;color:#333;overflow-x:hidden;}
+main{position:relative;width:100%;max-width:500px;margin:0 auto;height:100vh;display:flex;flex-direction:column;}
+.page{position:absolute;width:100%;height:calc(100% - 60px);top:0;left:100%;opacity:0;transition:all 0.5s ease;}
+.page.active{left:0;opacity:1;}
+.card{background:#fff;padding:1em;margin:1em 0;border-radius:15px;box-shadow:0 3px 8px rgba(0,0,0,0.2);transition:transform 0.2s;}
+.card:hover{transform:scale(1.02);}
 input,button,textarea{width:100%;padding:0.7em;margin:0.5em 0;border-radius:8px;border:1px solid #ccc;font-size:1em;}
 button{background:#ff6b6b;color:#fff;font-weight:bold;cursor:pointer;transition:0.3s;}
 button:hover{background:#ff4757;}
 textarea{resize:none;}
 .avatar{width:40px;height:40px;border-radius:50%;margin-right:0.5em;display:flex;justify-content:center;align-items:center;font-weight:bold;color:#fff;background:#1e90ff;}
-.message{display:flex;align-items:flex-start;margin:0.5em 0;}
-.chat-box{height:300px;overflow-y:auto;padding:0.5em;border:1px solid #ccc;border-radius:10px;background:#f9f9f9;}
-.friend-list{max-height:150px;overflow-y:auto;}
+.message{display:flex;align-items:flex-start;margin:0.5em 0;animation:fadeIn 0.5s;}
+.chat-box{height:200px;overflow-y:auto;padding:0.5em;border:1px solid #ccc;border-radius:10px;background:#f9f9f9;}
+.friend-list{max-height:200px;overflow-y:auto;}
 .friend-item{display:flex;justify-content:space-between;align-items:center;padding:0.3em 0;border-bottom:1px solid #eee;}
-.story-container{display:flex;overflow-x:auto;margin:0.5em 0;}
-.story{width:60px;height:60px;border-radius:50%;margin-right:0.5em;overflow:hidden;cursor:pointer;}
+.story-container{display:flex;overflow-x:auto;margin:0.5em 0;animation:fadeIn 0.5s;}
+.story{width:60px;height:60px;border-radius:50%;margin-right:0.5em;overflow:hidden;cursor:pointer;transition:0.3s;position:relative;}
+.story:hover{transform:scale(1.2);}
 .story img{width:100%;height:100%;object-fit:cover;}
-.post{padding:0.5em;margin:0.5em 0;border-radius:10px;background:#f7f7f7;}
+.story-timer{position:absolute;bottom:0;width:100%;height:5px;background:#ff6b6b;transition:width 5s linear;}
+.post{padding:0.5em;margin:0.5em 0;border-radius:10px;background:#f7f7f7;animation:fadeIn 0.5s;position:relative;}
+.like-btn, .comment-btn{background:none;border:none;color:#ff6b6b;font-weight:bold;cursor:pointer;margin-right:0.5em;}
+.comments{margin-top:0.5em;padding-left:1em;border-left:2px solid #eee;}
 nav{position:fixed;bottom:0;left:0;width:100%;background:#fff;display:flex;justify-content:space-around;padding:0.5em 0;border-top:1px solid #ccc;}
-nav button{background:none;color:#333;font-weight:bold;font-size:0.9em;width:100%;border:none;cursor:pointer;}
+nav button{background:none;color:#333;font-weight:bold;font-size:0.9em;width:100%;border:none;cursor:pointer;transition:0.3s;}
 nav button.active{color:#ff6b6b;}
 .hidden{display:none;}
 .profile-pic{width:60px;height:60px;border-radius:50%;margin-bottom:0.5em;}
+.online-dot{width:10px;height:10px;border-radius:50%;background:#2ed573;display:inline-block;margin-left:5px;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 </style>
 </head>
 <body>
@@ -46,35 +51,35 @@ nav button.active{color:#ff6b6b;}
 <p id="auth-msg"></p>
 </div>
 
-<!-- APP -->
+<!-- App -->
 <div id="app" class="hidden">
 
 <!-- Pages -->
-<div id="page-home" class="card page">
+<div id="page-home" class="page card active">
 <h3>פיד</h3>
 <textarea id="new-post" placeholder="מה חדש?"></textarea>
 <button id="post-btn">פרסם</button>
 <div id="posts"></div>
 </div>
 
-<div id="page-stories" class="card page hidden">
+<div id="page-stories" class="page card">
 <h3>סטוריז</h3>
 <div id="stories" class="story-container"></div>
 </div>
 
-<div id="page-friends" class="card page hidden">
+<div id="page-friends" class="page card">
 <h3>רשימת חברים</h3>
 <div id="friends" class="friend-list"></div>
 </div>
 
-<div id="page-chat" class="card page hidden">
+<div id="page-chat" class="page card">
 <h3>צ׳אט ציבורי</h3>
 <div class="chat-box" id="chat-box"></div>
 <input type="text" id="chat-input" placeholder="כתוב הודעה...">
 <button id="send-btn">שלח</button>
 </div>
 
-<div id="page-profile" class="card page hidden">
+<div id="page-profile" class="page card">
 <h3>פרופיל אישי</h3>
 <img id="profile-pic" src="https://via.placeholder.com/60" class="profile-pic">
 <input type="text" id="username" placeholder="שם משתמש">
@@ -102,23 +107,22 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebas
 import { getDatabase, ref, push, set, onValue, onChildAdded, update } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 
-// ===== Firebase Config =====
+// Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
-  authDomain: "hflsystem.firebaseapp.com",
-  databaseURL: "https://hflsystem-default-rtdb.firebaseio.com",
-  projectId: "hflsystem",
-  storageBucket: "hflsystem.firebasestorage.app",
-  messagingSenderId: "469775027908",
-  appId: "1:469775027908:web:f3501f10942f58ba18c391",
-  measurementId: "G-G4W68NT5T2"
+apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
+authDomain: "hflsystem.firebaseapp.com",
+databaseURL: "https://hflsystem-default-rtdb.firebaseio.com",
+projectId: "hflsystem",
+storageBucket: "hflsystem.firebasestorage.app",
+messagingSenderId: "469775027908",
+appId: "1:469775027908:web:f3501f10942f58ba18c391",
+measurementId: "G-G4W68NT5T2"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-// ===== Elements =====
+// Elements
 const authCard=document.getElementById("auth-card");
 const emailInput=document.getElementById("email");
 const passwordInput=document.getElementById("password");
@@ -128,12 +132,7 @@ const authMsg=document.getElementById("auth-msg");
 
 const appDiv=document.getElementById("app");
 const pages=document.querySelectorAll(".page");
-
-const navHome=document.getElementById("nav-home");
-const navStories=document.getElementById("nav-stories");
-const navFriends=document.getElementById("nav-friends");
-const navChat=document.getElementById("nav-chat");
-const navProfile=document.getElementById("nav-profile");
+const navButtons=[...document.querySelectorAll("nav button")];
 
 const postsDiv=document.getElementById("posts");
 const newPostInput=document.getElementById("new-post");
@@ -153,46 +152,25 @@ const updateProfileBtn=document.getElementById("update-profile");
 const profileUpload=document.getElementById("profile-upload");
 const logoutBtn=document.getElementById("logout-btn");
 
-// ===== Navigation =====
-function showPage(pageId){
-pages.forEach(p=>p.classList.add("hidden"));
-document.getElementById(pageId).classList.remove("hidden");
-navHome.classList.remove("active");
-navStories.classList.remove("active");
-navFriends.classList.remove("active");
-navChat.classList.remove("active");
-navProfile.classList.remove("active");
-if(pageId=="page-home") navHome.classList.add("active");
-if(pageId=="page-stories") navStories.classList.add("active");
-if(pageId=="page-friends") navFriends.classList.add("active");
-if(pageId=="page-chat") navChat.classList.add("active");
-if(pageId=="page-profile") navProfile.classList.add("active");
+// Smart Navigation
+function showPage(index){
+pages.forEach((p,i)=>{p.classList.remove("active");if(i===index)p.classList.add("active");});
+navButtons.forEach((b,i)=>b.classList.toggle("active",i===index));
 }
-navHome.onclick=()=>showPage("page-home");
-navStories.onclick=()=>showPage("page-stories");
-navFriends.onclick=()=>showPage("page-friends");
-navChat.onclick=()=>showPage("page-chat");
-navProfile.onclick=()=>showPage("page-profile");
+navButtons.forEach((b,i)=>b.addEventListener("click",()=>showPage(i)));
 
-// ===== Auth =====
+// Auth
 signupBtn.onclick=()=>{
 createUserWithEmailAndPassword(auth,emailInput.value,passwordInput.value)
-.then(cred=>{
-authMsg.textContent="נרשמת בהצלחה!";
-initUser(cred.user);
-})
+.then(cred=>{authMsg.textContent="נרשמת בהצלחה!";initUser(cred.user);})
 .catch(err=>authMsg.textContent=err.message);
 };
-
-loginBtn.onclick=()=>{
-signInWithEmailAndPassword(auth,emailInput.value,passwordInput.value)
+loginBtn.onclick=()=>signInWithEmailAndPassword(auth,emailInput.value,passwordInput.value)
 .then(cred=>initUser(cred.user))
 .catch(err=>authMsg.textContent=err.message);
-};
-
 logoutBtn.onclick=()=>signOut(auth).then(()=>location.reload());
 
-// ===== Init User =====
+// Init User
 function initUser(user){
 authCard.style.display="none";
 appDiv.classList.remove("hidden");
@@ -206,51 +184,40 @@ bio:""
 updatePosts();
 updateStories();
 updateFriends();
-updateProfileUI(user);
 updateChat();
+updateProfileUI(user);
 }
 
-// ===== Profile =====
+// Profile
 function updateProfileUI(user){
 onValue(ref(db,"users/"+user.uid),snapshot=>{
 const data=snapshot.val();
-if(data){
-profilePic.src=data.profilePic||"https://via.placeholder.com/60";
+if(data){profilePic.src=data.profilePic||"https://via.placeholder.com/60";
 usernameInput.value=data.username||user.email.split("@")[0];
-bioInput.value=data.bio||"";
-}
+bioInput.value=data.bio||"";}
 });
 }
-
 updateProfileBtn.onclick=()=>{
 const user=auth.currentUser;
 const reader=new FileReader();
 if(profileUpload.files[0]){
 reader.readAsDataURL(profileUpload.files[0]);
-reader.onload=()=>{ 
-update(ref(db,"users/"+user.uid),{
-username:usernameInput.value,
-bio:bioInput.value,
-profilePic:reader.result
-});
-};
-}else{
-update(ref(db,"users/"+user.uid),{
-username:usernameInput.value,
-bio:bioInput.value
-});
-}
+reader.onload=()=>{ update(ref(db,"users/"+user.uid),{
+username:usernameInput.value,bio:bioInput.value,profilePic:reader.result});};
+}else{update(ref(db,"users/"+user.uid),{username:usernameInput.value,bio:bioInput.value});}
 };
 
-// ===== Posts =====
+// Posts with likes & comments
 postBtn.onclick=()=>{
 const user=auth.currentUser;
 if(newPostInput.value.trim()==="") return;
 push(ref(db,"posts"),{
 text:newPostInput.value,
-sender:user.email,
-avatar:user.email[0].toUpperCase(),
-time:new Date().toLocaleTimeString()
+sender:user.username||user.email,
+avatar:user.username?user.username[0].toUpperCase():user.email[0].toUpperCase(),
+time:new Date().toLocaleTimeString(),
+likes:0,
+comments:[]
 });
 newPostInput.value="";
 };
@@ -262,35 +229,41 @@ snapshot.forEach(snap=>{
 const post=snap.val();
 const div=document.createElement("div");
 div.className="post";
-div.innerHTML=`<div style="display:flex;align-items:center;margin-bottom:0.5em;"><div class="avatar">${post.avatar}</div><b>${post.sender}</b> <span style="font-size:0.8em;margin-left:5px;">${post.time}</span></div><p>${post.text}</p>`;
+div.innerHTML=`
+<div style="display:flex;align-items:center;margin-bottom:0.5em;">
+<div class="avatar">${post.avatar}</div><b>${post.sender}</b> <span style="font-size:0.8em;margin-left:5px;">${post.time}</span></div>
+<p>${post.text}</p>
+<button class="like-btn">❤️ ${post.likes||0}</button>
+<button class="comment-btn">💬</button>
+<div class="comments"></div>`;
 postsDiv.appendChild(div);
+
+// Like functionality
+div.querySelector(".like-btn").onclick=()=>{
+update(ref(db,"posts/"+snap.key),{likes:(post.likes||0)+1});
+};
+
+// Comment functionality
+const commentBtn=div.querySelector(".comment-btn");
+const commentsDiv=div.querySelector(".comments");
+commentBtn.onclick=()=>{
+const comment=prompt("כתוב תגובה:");
+if(comment){const updatedComments=post.comments||[];updatedComments.push({text:comment,sender:auth.currentUser.username||auth.currentUser.email});
+update(ref(db,"posts/"+snap.key),{comments:updatedComments});}
+};
+if(post.comments) post.comments.forEach(c=>{const cdiv=document.createElement("div");cdiv.textContent=`${c.sender}: ${c.text}`;commentsDiv.appendChild(cdiv);});
 });
-});
 }
 
-// ===== Stories =====
-const storyImages=[
-"https://picsum.photos/id/237/100",
-"https://picsum.photos/id/238/100",
-"https://picsum.photos/id/239/100",
-"https://picsum.photos/id/240/100",
-"https://picsum.photos/id/241/100",
-"https://picsum.photos/id/242/100"
-];
-
-function updateStories(){
-storiesDiv.innerHTML="";
-for(let i=0;i<storyImages.length;i++){
-const s=document.createElement("div");
-s.className="story";
-const img=document.createElement("img");
-img.src=storyImages[i];
-s.appendChild(img);
-storiesDiv.appendChild(s);
-}
+// Stories
+const storyImages=["https://picsum.photos/id/237/100","https://picsum.photos/id/238/100","https://picsum.photos/id/239/100","https://picsum.photos/id/240/100","https://picsum.photos/id/241/100"];
+function updateStories(){storiesDiv.innerHTML="";for(let i=0;i<storyImages.length;i++){
+const s=document.createElement("div");s.className="story";const img=document.createElement("img");img.src=storyImages[i];s.appendChild(img);
+const timer=document.createElement("div");timer.className="story-timer";s.appendChild(timer);
+storiesDiv.appendChild(s);}
 }
 
-// ===== Friends =====
+// Friends
 function updateFriends(){
 onValue(ref(db,"users"),snapshot=>{
 friendsDiv.innerHTML="";
@@ -299,67 +272,37 @@ const user=snap.val();
 if(!user.email.startsWith("bot_")){
 const div=document.createElement("div");
 div.className="friend-item";
-div.innerHTML=`<span>${user.username||user.email}</span><button onclick="addFriend('${snap.key}')">הוסף</button>`;
-friendsDiv.appendChild(div);
-}
-});
+div.innerHTML=`<span>${user.username||user.email}</span><button onclick="addFriend('${snap.key}')">הוסף</button>${user.online?'<span class="online-dot"></span>':''}`;
+friendsDiv.appendChild(div);}
 });
 }
+window.addFriend=(uid)=>{const current=auth.currentUser;set(ref(db,"users/"+current.uid+"/friends/"+uid),true);alert("המשתמש נוסף לחברים!");};
 
-window.addFriend=(uid)=>{
-const current=auth.currentUser;
-set(ref(db,"users/"+current.uid+"/friends/"+uid),true);
-alert("המשתמש נוסף לחברים!");
-};
-
-// ===== Chat =====
+// Chat
 sendBtn.onclick=()=>{
-const user=auth.currentUser;
-if(chatInput.value.trim()==="") return;
-push(ref(db,"chat"),{
-text:chatInput.value,
-sender:user.username||user.email,
-avatar:user.username?user.username[0].toUpperCase():user.email[0].toUpperCase(),
-time:new Date().toLocaleTimeString()
-});
+const user=auth.currentUser;if(chatInput.value.trim()==="") return;
+push(ref(db,"chat"),{text:chatInput.value,sender:user.username||user.email,avatar:user.username?user.username[0].toUpperCase():user.email[0].toUpperCase(),time:new Date().toLocaleTimeString()});
 chatInput.value="";
 };
-
 function updateChat(){
 onChildAdded(ref(db,"chat"),data=>{
-const msg=data.val();
-const div=document.createElement("div");
-div.className="message";
+const msg=data.val();const div=document.createElement("div");div.className="message";
 div.innerHTML=`<div class="avatar">${msg.avatar}</div><div><b>${msg.sender}</b>: ${msg.text}</div>`;
-chatBox.appendChild(div);
-chatBox.scrollTop=chatBox.scrollHeight;
+chatBox.appendChild(div);chatBox.scrollTop=chatBox.scrollHeight;
 });
 }
 
-// ===== Bots 5 =====
-const bots=[
-{name:"Alice",pic:"https://i.pravatar.cc/60?img=1"},
-{name:"Bob",pic:"https://i.pravatar.cc/60?img=2"},
-{name:"Charlie",pic:"https://i.pravatar.cc/60?img=3"},
-{name:"Dana",pic:"https://i.pravatar.cc/60?img=4"},
-{name:"Eli",pic:"https://i.pravatar.cc/60?img=5"}
-];
+// Bots 5 active
+const bots=[{name:"Alice",pic:"https://i.pravatar.cc/60?img=1"},{name:"Bob",pic:"https://i.pravatar.cc/60?img=2"},{name:"Charlie",pic:"https://i.pravatar.cc/60?img=3"},{name:"Dana",pic:"https://i.pravatar.cc/60?img=4"},{name:"Eli",pic:"https://i.pravatar.cc/60?img=5"}];
 const botMessages=["שלום לכולם!","איך הולך?","מישהו כאן?","איזה יום יפה היום","חחח","ממש מגניב!","אני מסכים"];
-bots.forEach(bot=>{
-function botAct(){
-const msg=botMessages[Math.floor(Math.random()*botMessages.length)];
+bots.forEach(bot=>{function botAct(){const msg=botMessages[Math.floor(Math.random()*botMessages.length)];
 push(ref(db,"chat"),{text:msg,sender:bot.name,avatar:bot.name[0].toUpperCase(),time:new Date().toLocaleTimeString()});
-push(ref(db,"posts"),{text:msg,sender:bot.name,avatar:bot.name[0].toUpperCase(),time:new Date().toLocaleTimeString()});
+push(ref(db,"posts"),{text:msg,sender:bot.name,avatar:bot.name[0].toUpperCase(),time:new Date().toLocaleTimeString(),likes:Math.floor(Math.random()*5),comments:[]});
 set(ref(db,"users/bot_"+bot.name),{email:bot.name,username:bot.name,online:true,profilePic:bot.pic});
-setTimeout(botAct,Math.random()*10000+5000);
-}
-botAct();
-});
+setTimeout(botAct,Math.random()*10000+5000);}botAct();});
 
-// ===== Monitor Auth =====
-onAuthStateChanged(auth,user=>{
-if(user){initUser(user);}
-});
+// Auth State
+onAuthStateChanged(auth,user=>{if(user){initUser(user);}});
 </script>
 </body>
 </html>
