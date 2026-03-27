@@ -3,186 +3,197 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HFL SUS Platform</title>
-<!-- SUS Styles -->
+<title>HFL Chat + AI</title>
 <style>
-:root {
-  --primary-color: #2b2d42;
-  --secondary-color: #8d99ae;
-  --accent-color: #ef233c;
-  --success-color: #06d6a0;
-  --hover-color: #ffd166;
-  --text-color: #edf2f4;
-}
-body {
-  margin: 0; font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #2b2d42, #8d99ae);
-  color: var(--text-color);
-}
-header {
-  background: var(--primary-color); padding: 1rem;
-  display: flex; justify-content: space-between; align-items: center;
-}
-header h1 { margin: 0; font-size: 1.5rem; color: var(--accent-color);}
-nav a {
-  color: var(--text-color); text-decoration: none; margin-left: 1rem;
-  font-weight: bold; transition: color 0.3s;
-}
-nav a:hover { color: var(--hover-color);}
-.container { padding: 1rem; max-width: 1200px; margin: auto;}
-.tabs { display: flex; gap: 1rem; margin-bottom: 1rem;}
-.tab { padding: 0.5rem 1rem; background: var(--secondary-color); cursor: pointer; border-radius:5px; transition: all 0.3s;}
-.tab.active { background: var(--accent-color);}
-.card { background: var(--primary-color); padding:1rem; border-radius: 10px; margin-bottom: 1rem; box-shadow: 0 4px 8px rgba(0,0,0,0.3);}
-button { padding: 0.5rem 1rem; border: none; border-radius:5px; cursor:pointer; transition: all 0.3s; font-weight: bold;}
-button:hover { transform: scale(1.05);}
-input { padding:0.5rem; border-radius:5px; border:none; margin-bottom:0.5rem; width:100%;}
-.success { color: var(--success-color); animation: pulse 0.8s;}
-@keyframes pulse {
-  0% { transform: scale(1);}
-  50% { transform: scale(1.1);}
-  100% { transform: scale(1);}
-}
-/* Chat SUS */
-.chat { background: var(--secondary-color); padding:1rem; border-radius:10px; max-height:400px; overflow-y:auto;}
-.message { margin-bottom:0.5rem; padding:0.5rem; border-radius:5px; background:#2b2d42;}
-.message.self { background:#06d6a0; color:#000;}
-.online-dot { height:10px; width:10px; border-radius:50%; display:inline-block; margin-right:5px; background:#06d6a0; animation: pulse 1s infinite;}
-</style>// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
-  authDomain: "hflsystem.firebaseapp.com",
-  databaseURL: "https://hflsystem-default-rtdb.firebaseio.com",
-  projectId: "hflsystem",
-  storageBucket: "hflsystem.firebasestorage.app",
-  messagingSenderId: "469775027908",
-  appId: "1:469775027908:web:f3501f10942f58ba18c391"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth();
-  const db = getDatabase();
-
-  // Tabs
-  const tabs = ["Home", "About", "Contact", "Chat"];
-  let currentTab = "Home";
-
-  window.addEventListener("DOMContentLoaded", () => {
-    renderTabs();
-    renderContent();
-    setupAuth();
-  });
-
-  function renderTabs() {
-    const tabsContainer = document.createElement("div");
-    tabsContainer.classList.add("tabs");
-    tabs.forEach(tab => {
-      const t = document.createElement("div");
-      t.classList.add("tab"); if(tab===currentTab) t.classList.add("active");
-      t.innerText = tab;
-      t.onclick = () => { currentTab = tab; document.querySelectorAll(".tab").forEach(el=>el.classList.remove("active")); t.classList.add("active"); renderContent(); }
-      tabsContainer.appendChild(t);
-    });
-    document.body.prepend(tabsContainer);
-  }
-
-  function renderContent() {
-    let container = document.querySelector(".container");
-    if(!container) { container = document.createElement("div"); container.classList.add("container"); document.body.appendChild(container);}
-    container.innerHTML = "";
-    if(currentTab==="Home") renderHome(container);
-    else if(currentTab==="About") renderAbout(container);
-    else if(currentTab==="Contact") renderContact(container);
-    else if(currentTab==="Chat") renderChat(container);
-  }
-
-  function renderHome(container){
-    const card = document.createElement("div"); card.classList.add("card");
-    card.innerHTML = `<h2>Welcome to HFL SUS Platform</h2><p>Members Count: <span id="members-count">0</span></p>`;
-    container.appendChild(card);
-    // Count members dynamically
-    const membersCount = ref(db, 'users/');
-    onValue(membersCount, (snapshot)=>{
-      document.getElementById("members-count").innerText = snapshot.size || Object.keys(snapshot.val()||{}).length;
-    });
-  }
-
-  function renderAbout(container){
-    const card = document.createElement("div"); card.classList.add("card");
-    card.innerHTML = `<h2>About HFL</h2>
-    <p>HFL is a civic organization aiming to liberate human freedom, create alternatives to centralized authority, and empower its members. We form a community governed by its members, promoting autonomy and collaboration. 🌐✨</p>`;
-    container.appendChild(card);
-  }
-
-  function renderContact(container){
-    const card = document.createElement("div"); card.classList.add("card");
-    card.innerHTML = `<h2>Join HFL</h2>
-    <input type="text" id="contact-name" placeholder="Name">
-    <input type="email" id="contact-email" placeholder="Email">
-    <button id="contact-submit">Send Request</button>
-    <p id="contact-msg"></p>`;
-    container.appendChild(card);
-    document.getElementById("contact-submit").onclick = () => {
-      const name = document.getElementById("contact-name").value;
-      const email = document.getElementById("contact-email").value;
-      if(!name||!email){ document.getElementById("contact-msg").innerText="Fill all fields"; return;}
-      const newRef = push(ref(db,'requests/')); set(newRef,{name,email,timestamp:Date.now()});
-      document.getElementById("contact-msg").innerText="Request sent ✔️"; document.getElementById("contact-msg").className="success";
-    }
-  }
-
-  function renderChat(container){
-    const user = auth.currentUser;
-    if(!user) { container.innerHTML="<p>Please register/login to enter the chat 🌐</p>"; return; }
-    const chatDiv = document.createElement("div"); chatDiv.classList.add("chat");
-    const input = document.createElement("input"); input.placeholder="Type message...";
-    const sendBtn = document.createElement("button"); sendBtn.innerText="Send";
-    chatDiv.appendChild(input); chatDiv.appendChild(sendBtn);
-    container.appendChild(chatDiv);
-
-    const messagesRef = ref(db,'messages/');
-    onValue(messagesRef,(snapshot)=>{
-      chatDiv.querySelectorAll(".message").forEach(m=>m.remove());
-      snapshot.forEach(child=>{
-        const m = document.createElement("div"); m.classList.add("message"); if(child.val().uid===user.uid)m.classList.add("self");
-        m.innerText = `${child.val().name}: ${child.val().text}`;
-        chatDiv.insertBefore(m,input);
-      });
-    });
-
-    sendBtn.onclick = () => {
-      if(input.value.trim()==="") return;
-      const newRef = push(messagesRef);
-      set(newRef,{uid:user.uid,name:user.email,text:input.value,timestamp:Date.now()});
-      input.value="";
-    }
-  }
-
-  function setupAuth(){
-    // Auto login state
-    onAuthStateChanged(auth,(user)=>{
-      renderContent();
-    });
-  }
-</script>
+  /* SUS Dark Modern */
+  body { font-family: 'Segoe UI', sans-serif; background:#0d1117; color:#c9d1d9; margin:0; }
+  header { background:#161b22; padding:20px; display:flex; justify-content:space-between; align-items:center; }
+  header h1 { margin:0; color:#58a6ff; }
+  nav button { background:#238636; color:white; border:none; padding:8px 16px; margin-left:8px; cursor:pointer; border-radius:6px; transition:0.3s; }
+  nav button:hover { background:#2ea043; }
+  main { padding:20px; }
+  .card { background:#161b22; padding:20px; margin-bottom:16px; border-radius:10px; box-shadow: 0 0 10px #58a6ff33; }
+  input, button { padding:10px; border-radius:6px; border:none; margin:5px 0; width:100%; }
+  input[type=password] { font-family: 'Courier New', monospace; }
+  .success { color:#2ea043; font-weight:bold; transition:0.5s; }
+  .error { color:#f85149; font-weight:bold; transition:0.5s; }
+  .chat-box { background:#0d1117; border:1px solid #30363d; border-radius:10px; padding:10px; max-height:300px; overflow-y:auto; }
+  .chat-message { margin-bottom:10px; padding:6px; border-radius:6px; background:#21262d; transition:0.3s; }
+  .online-dot { display:inline-block; width:10px; height:10px; border-radius:50%; background:#2ea043; margin-right:6px; }
+  .user-list { margin-top:10px; padding:10px; border:1px solid #30363d; border-radius:10px; background:#161b22; }
+</style>
 </head>
 <body>
+
 <header>
-  <h1>HFL SUS Platform</h1>
+  <h1>HFL Chat</h1>
   <nav>
-    <a href="#">Home</a>
-    <a href="#">About</a>
-    <a href="#">Contact</a>
-    <a href="#">Chat</a>
+    <button onclick="showSection('home')">Home</button>
+    <button onclick="showSection('signup')">Sign Up</button>
+    <button onclick="showSection('login')">Login</button>
+    <button onclick="showSection('chat')">Chat</button>
   </nav>
 </header>
-<div class="container"></div>
+
+<main>
+  <!-- Home -->
+  <section id="home">
+    <div class="card">
+      <h2>Welcome to Human Free Light HFL</h2>
+      <p>Our mission: human freedom and creating a civil alternative organization. Join us to shape a self-governing community. 🌟</p>
+    </div>
+  </section>
+
+  <!-- Sign Up -->
+  <section id="signup" style="display:none">
+    <div class="card">
+      <h2>Sign Up</h2>
+      <input type="text" id="signup-name" placeholder="Your Name">
+      <input type="email" id="signup-email" placeholder="Email">
+      <input type="password" id="signup-password" placeholder="Password (min 8 chars + number)">
+      <button onclick="signUp()">Register</button>
+      <p id="signup-msg"></p>
+    </div>
+  </section>
+
+  <!-- Login -->
+  <section id="login" style="display:none">
+    <div class="card">
+      <h2>Login</h2>
+      <input type="email" id="login-email" placeholder="Email">
+      <input type="password" id="login-password" placeholder="Password">
+      <button onclick="login()">Login</button>
+      <p id="login-msg"></p>
+    </div>
+  </section>
+
+  <!-- Chat -->
+  <section id="chat" style="display:none">
+    <div class="card">
+      <h2>Chat</h2>
+      <div class="chat-box" id="chat-box"></div>
+      <input type="text" id="chat-input" placeholder="Type a message">
+      <button onclick="sendMessage()">Send</button>
+      <div class="user-list" id="user-list"></div>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+  import { getDatabase, ref, push, set, onChildAdded, onValue } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
+    authDomain: "hflsystem.firebaseapp.com",
+    databaseURL: "https://hflsystem-default-rtdb.firebaseio.com",
+    projectId: "hflsystem",
+    storageBucket: "hflsystem.firebasestorage.app",
+    messagingSenderId: "469775027908",
+    appId: "1:469775027908:web:f3501f10942f58ba18c391"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  let currentUser = null;
+
+  function showSection(id) {
+    document.querySelectorAll('main section').forEach(s => s.style.display='none');
+    document.getElementById(id).style.display='block';
+  }
+
+  // Sign Up
+  window.signUp = function() {
+    const name = document.getElementById('signup-name').value;
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+    const msg = document.getElementById('signup-msg');
+
+    if(name && email && password.length>=8 && /\d/.test(password)){
+      const usersRef = ref(db, 'users');
+      const newUserRef = push(usersRef);
+      set(newUserRef, { name, email, password, online:false });
+      msg.textContent = "✅ Registered successfully!";
+      msg.className = 'success';
+    } else {
+      msg.textContent = "⚠️ Invalid input or weak password";
+      msg.className = 'error';
+    }
+  };
+
+  // Login
+  window.login = function() {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    const msg = document.getElementById('login-msg');
+    const usersRef = ref(db, 'users');
+
+    onChildAdded(usersRef, snapshot => {
+      const u = snapshot.val();
+      if(u.email===email && u.password===password){
+        currentUser = snapshot.key;
+        msg.textContent = "✅ Login successful!";
+        msg.className='success';
+        set(ref(db,'users/'+currentUser+'/online'), true);
+        showSection('chat');
+        updateUserList();
+      }
+    });
+  };
+
+  // Chat
+  window.sendMessage = function() {
+    const input = document.getElementById('chat-input');
+    const text = input.value;
+    if(!text) return;
+    const messagesRef = ref(db, 'messages');
+    const newMsgRef = push(messagesRef);
+    set(newMsgRef, { user: currentUser || 'AI', text, timestamp: Date.now() });
+    input.value='';
+  };
+
+  // Show chat messages
+  const chatBox = document.getElementById('chat-box');
+  const messagesRef = ref(db, 'messages');
+  onChildAdded(messagesRef, snapshot => {
+    const m = snapshot.val();
+    const div = document.createElement('div');
+    div.className = 'chat-message';
+    div.textContent = `${m.user}: ${m.text}`;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // AI bot responds automatically to greetings
+    if(m.user!==currentUser && /hello|hi|hey/i.test(m.text)){
+      setTimeout(()=>sendAImessage("Hello! Welcome to HFL chat 🌟"),500);
+    }
+  });
+
+  function sendAImessage(msg){
+    const messagesRef = ref(db, 'messages');
+    const newMsgRef = push(messagesRef);
+    set(newMsgRef, { user:'HFL AI', text:msg, timestamp: Date.now() });
+  }
+
+  // Update online users
+  function updateUserList(){
+    const userListDiv = document.getElementById('user-list');
+    userListDiv.innerHTML='';
+    const usersRef = ref(db, 'users');
+    onValue(usersRef, snapshot=>{
+      const users = snapshot.val();
+      for(const key in users){
+        if(users[key].online){
+          const div = document.createElement('div');
+          div.innerHTML = `<span class="online-dot"></span>${users[key].name}`;
+          userListDiv.appendChild(div);
+        }
+      }
+    });
+  }
+
+</script>
+
 </body>
 </html>
