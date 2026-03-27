@@ -3,78 +3,110 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HFL - Human Free Light</title>
+<title>HUMAN FREE LIGHT - HFL</title>
 <link rel="stylesheet" href="style.css">
+<!-- Firebase SDK placeholders -->
+<script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+<script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
+<script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
 </head>
 <body>
 
-<nav>
-  <button onclick="go('home')">🏠 Home</button>
-  <button onclick="go('about')">🧠 About</button>
-  <button onclick="go('join')">🚀 Join</button>
-  <button onclick="go('login')">🔐 Login</button>
-  <button onclick="go('network')">🌐 Network</button>
-  <button onclick="go('hierarchy')">📊 Hierarchy</button>
-</nav>
+<!-- Header / Nav -->
+<header>
+  <h1>HUMAN FREE LIGHT - HFL</h1>
+  <nav>
+    <button class="nav-btn" data-target="home">בית 🏠</button>
+    <button class="nav-btn" data-target="about">אודות ℹ️</button>
+    <button class="nav-btn" data-target="contact">צור קשר ✉️</button>
+    <button class="nav-btn" data-target="login">התחבר 🔑</button>
+    <button class="nav-btn" data-target="chat">צ’אט 💬</button>
+    <button class="nav-btn" data-target="code">חקיקת קוד 📜</button>
+    <button class="nav-btn" data-target="hierarchy">מבנה שליטה 🏰</button>
+  </nav>
+</header>
 
-<!-- Home -->
-<div id="home" class="page active">
-  <h1>HFL - Human Free Light</h1>
-  <div id="counter">0</div>
-  <p>Active Agents ⚡</p>
-</div>
+<!-- Pages -->
+<main>
+  <!-- Home -->
+  <section id="home" class="page active">
+    <h2>ברוכים הבאים ל-HFL 🌌</h2>
+    <p>אנחנו קבוצה חופשית לשחרור האדם ויצירת אלטרנטיבה לממסד.</p>
+    <div class="member-counter">
+      חברים בארגון: <span id="member-count">0</span> ✨
+    </div>
+  </section>
 
-<!-- About -->
-<div id="about" class="page">
-  <h2>About HFL</h2>
-  <p>HFL is a sovereign human movement. Built to free individuals from imposed structures. Temporary civil system that exists only to restore freedom and dissolve once independence is achieved. 🕊️</p>
-</div>
+  <!-- About -->
+  <section id="about" class="page">
+    <h2>מי אנחנו 🕊️</h2>
+    <p>
+      HFL היא קבוצה אזרחית לשחרור האדם, יצירת אלטרנטיבה לממסד, והקמת מערכת חופשית שתפרק את עצמה לאחר השגת היעדים.
+    </p>
+  </section>
 
-<!-- Join -->
-<div id="join" class="page">
-  <h2>Join HFL 🚀</h2>
-  <input id="n" placeholder="Name">
-  <input id="e" placeholder="Email">
-  <input id="p" type="password" placeholder="Password (min 8 + number)">
-  <button onclick="signup()">Join</button>
-  <p id="joinMsg"></p>
-</div>
+  <!-- Contact / Join -->
+  <section id="contact" class="page">
+    <h2>הצטרף לארגון ✨</h2>
+    <form id="contact-form">
+      <input type="text" placeholder="שם מלא" id="contact-name" required>
+      <input type="email" placeholder="אימייל" id="contact-email" required>
+      <button type="submit">שלח בקשה 📤</button>
+      <div id="contact-success" class="success-msg">✨ בקשה נשלחה!</div>
+    </form>
+  </section>
 
-<!-- Login -->
-<div id="login" class="page">
-  <h2>Access</h2>
-  <h3>Agent</h3>
-  <input id="le" placeholder="Email">
-  <input id="lp" type="password" placeholder="Password">
-  <button onclick="login()">Enter</button>
+  <!-- Login / Signup -->
+  <section id="login" class="page">
+    <h2>התחברות / הרשמה 🔑</h2>
+    <form id="signup-form">
+      <input type="text" placeholder="שם משתמש" id="signup-name" required>
+      <input type="email" placeholder="אימייל" id="signup-email" required>
+      <input type="password" placeholder="סיסמה (8+ תווים, מספר אחד לפחות)" id="signup-password" required>
+      <button type="submit">הירשם 📝</button>
+      <div id="signup-success" class="success-msg">✨ הרשמה בוצעה! ממתינים לאישור מנהל.</div>
+    </form>
 
-  <h3>Admin</h3>
-  <button onclick="admin()">Admin Login</button>
-  <p id="logMsg"></p>
-</div>
+    <form id="login-form">
+      <input type="text" placeholder="שם משתמש" id="login-username" required>
+      <input type="password" placeholder="סיסמה" id="login-password" required>
+      <button type="submit">התחבר 🔑</button>
+      <div id="login-success" class="success-msg">✨ התחברת בהצלחה!</div>
+    </form>
+  </section>
 
-<!-- Network -->
-<div id="network" class="page">
-  <h2>HFL Network 🌐</h2>
-  <div id="chat" class="chatBox"></div>
-  <input id="m" placeholder="Message">
-  <button onclick="send()">Send</button>
-</div>
+  <!-- Chat -->
+  <section id="chat" class="page">
+    <h2>צ’אט חברים 💬</h2>
+    <div id="chat-online">משתמשים אונליין: <span id="online-count">0</span></div>
+    <div id="chat-box">
+      <!-- הודעות יופיעו כאן -->
+    </div>
+    <input type="text" placeholder="שלח הודעה..." id="chat-input">
+    <button id="chat-send">שלח 💌</button>
+  </section>
 
-<!-- Hierarchy -->
-<div id="hierarchy" class="page">
-  <h2>Hierarchy 📊</h2>
-  <div id="hierarchyPanel"></div>
-</div>
+  <!-- Code / Legislative -->
+  <section id="code" class="page">
+    <h2>חקיקת קוד 📜</h2>
+    <p>אם מצטרפים 10 משתמשים – נוצרת קבוצה פנימית לשינוי נהלים וחוקים.</p>
+    <div id="code-members">משתמשים שצירפו: <span id="code-count">0</span></div>
+    <textarea id="code-request" placeholder="מה אתה רוצה לשנות / ליצור?"></textarea>
+    <button id="code-send">שלח בקשה ✨</button>
+    <div id="code-success" class="success-msg">✨ בקשה נשלחה!</div>
+  </section>
 
-<!-- Admin Panel -->
-<div id="adminPanel" class="page">
-  <h2>Admin ⚡</h2>
-  <h3>Members</h3>
-  <div id="users"></div>
-  <h3>Manual Boost</h3>
-  <button onclick="boost()">+ Add Members</button>
-</div>
+  <!-- Hierarchy -->
+  <section id="hierarchy" class="page">
+    <h2>מבנה שליטה 🏰</h2>
+    <div id="hierarchy-tree">
+      <div>מנהל 🥇</div>
+      <div>מפקדים (5) 🛡️</div>
+      <div>סגן פיקוד (10) ⚔️</div>
+      <div>סוכנים 🕵️</div>
+    </div>
+  </section>
+</main>
 
 <script type="module" src="script.js"></script>
 </body>
