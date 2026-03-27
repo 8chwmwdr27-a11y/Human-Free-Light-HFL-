@@ -48,23 +48,24 @@ input { padding:0.5rem; border-radius:5px; border:none; margin-bottom:0.5rem; wi
 .message { margin-bottom:0.5rem; padding:0.5rem; border-radius:5px; background:#2b2d42;}
 .message.self { background:#06d6a0; color:#000;}
 .online-dot { height:10px; width:10px; border-radius:50%; display:inline-block; margin-right:5px; background:#06d6a0; animation: pulse 1s infinite;}
-</style>
-<!-- Firebase -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
-  import { getDatabase, ref, set, push, onValue } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+</style>// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
-    authDomain: "hflsystem.firebaseapp.com",
-    databaseURL: "https://hflsystem-default-rtdb.firebaseio.com",
-    projectId: "hflsystem",
-    storageBucket: "hflsystem.firebasestorage.app",
-    messagingSenderId: "469775027908",
-    appId: "1:469775027908:web:f3501f10942f58ba18c391"
-  };
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
+  authDomain: "hflsystem.firebaseapp.com",
+  databaseURL: "https://hflsystem-default-rtdb.firebaseio.com",
+  projectId: "hflsystem",
+  storageBucket: "hflsystem.firebasestorage.app",
+  messagingSenderId: "469775027908",
+  appId: "1:469775027908:web:f3501f10942f58ba18c391"
+};
 
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
   const app = initializeApp(firebaseConfig);
   const auth = getAuth();
   const db = getDatabase();
