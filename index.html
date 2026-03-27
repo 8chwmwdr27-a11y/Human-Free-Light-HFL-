@@ -3,18 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HFL Social SUS App</title>
+<title>HFL Social Live</title>
 <style>
-/* ===========================
-   SUS Modern Styles
-=========================== */
 body {font-family:'Segoe UI',sans-serif;background:#0a0f1a;color:#fff;margin:0;padding:0;}
 header{background:#0d1b3a;padding:1em;text-align:center;font-size:1.5em;font-weight:bold;color:#00f6ff;box-shadow:0 4px 6px rgba(0,0,0,0.3);}
 main{display:flex;flex-direction:column;align-items:center;padding:1em;}
-.card{background:#12192b;padding:1em;margin:1em 0;border-radius:10px;width:90%;max-width:500px;box-shadow:0 4px 10px rgba(0,0,0,0.5);transition:transform 0.3s ease;}
+.card{background:#12192b;padding:1em;margin:1em 0;border-radius:10px;width:90%;max-width:600px;box-shadow:0 4px 10px rgba(0,0,0,0.5);transition:transform 0.3s ease;}
 .card:hover{transform:scale(1.02);}
-input,button{width:100%;padding:0.8em;margin:0.5em 0;border-radius:8px;border:none;font-size:1em;}
-input{background:#0d1b3a;color:#fff;}
+input,button,textarea{width:100%;padding:0.8em;margin:0.5em 0;border-radius:8px;border:none;font-size:1em;}
+input,textarea{background:#0d1b3a;color:#fff;}
 button{background:#00f6ff;color:#0a0f1a;font-weight:bold;cursor:pointer;transition:0.3s;}
 button:hover{background:#00c8d8;}
 .chat-box{background:#0d1b3a;padding:0.5em;height:300px;overflow-y:auto;border-radius:8px;margin-top:1em;}
@@ -24,15 +21,17 @@ button:hover{background:#00c8d8;}
 .friend-list{background:#0d1b3a;padding:0.5em;border-radius:8px;margin-top:1em;max-height:150px;overflow-y:auto;}
 .friend-item{padding:0.3em 0;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #222;}
 .story-container{display:flex;overflow-x:auto;margin:0.5em 0;}
-.story{min-width:60px;height:60px;background:#00f6ff;border-radius:50%;margin-right:0.5em;display:flex;justify-content:center;align-items:center;color:#0a0f1a;font-weight:bold;cursor:pointer;transition:0.3s;}
+.story{min-width:60px;height:60px;border-radius:50%;margin-right:0.5em;display:flex;justify-content:center;align-items:center;color:#0a0f1a;font-weight:bold;cursor:pointer;transition:0.3s;overflow:hidden;}
+.story img{width:100%;height:100%;object-fit:cover;}
 .story:hover{transform:scale(1.2);}
 .post{background:#0d1b3a;padding:0.5em;margin:0.5em 0;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.4);}
 @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+textarea{resize:none;}
 </style>
 </head>
 <body>
 
-<header>HFL Social SUS</header>
+<header>HFL Social Live</header>
 <main>
 
 <!-- Auth -->
@@ -47,6 +46,17 @@ button:hover{background:#00c8d8;}
 
 <!-- App -->
 <div id="app" style="display:none;width:100%;max-width:600px;">
+
+<!-- Profile -->
+<div class="card" id="profile-card">
+<h3>פרופיל אישי</h3>
+<div>
+<img id="profile-pic" src="https://via.placeholder.com/60" alt="Profile" style="border-radius:50%;margin-bottom:0.5em;">
+<input type="text" id="username" placeholder="שם משתמש">
+<textarea id="bio" placeholder="ביוגרפיה קצרה"></textarea>
+<button id="update-profile">עדכן פרופיל</button>
+</div>
+</div>
 
 <!-- Stories -->
 <div class="card">
@@ -63,6 +73,8 @@ button:hover{background:#00c8d8;}
 <!-- Posts -->
 <div class="card">
 <h3>פוסטים</h3>
+<textarea id="new-post" placeholder="מה חדש?"></textarea>
+<button id="post-btn">פרסם</button>
 <div id="posts"></div>
 </div>
 
@@ -79,19 +91,19 @@ button:hover{background:#00c8d8;}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-import { getDatabase, ref, push, set, onValue, onChildAdded } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
+import { getDatabase, ref, push, set, onValue, onChildAdded, update } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 
 // Firebase Config
 const firebaseConfig = {
-apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
-authDomain: "hflsystem.firebaseapp.com",
-databaseURL: "https://hflsystem-default-rtdb.firebaseio.com",
-projectId: "hflsystem",
-storageBucket: "hflsystem.firebasestorage.app",
-messagingSenderId: "469775027908",
-appId: "1:469775027908:web:f3501f10942f58ba18c391",
-measurementId: "G-G4W68NT5T2"
+  apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
+  authDomain: "hflsystem.firebaseapp.com",
+  databaseURL: "https://hflsystem-default-rtdb.firebaseio.com",
+  projectId: "hflsystem",
+  storageBucket: "hflsystem.firebasestorage.app",
+  messagingSenderId: "469775027908",
+  appId: "1:469775027908:web:f3501f10942f58ba18c391",
+  measurementId: "G-G4W68NT5T2"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -106,15 +118,24 @@ const signupBtn=document.getElementById("signup-btn");
 const authMsg=document.getElementById("auth-msg");
 const authCard=document.getElementById("auth-card");
 const appDiv=document.getElementById("app");
+
 const chatBox=document.getElementById("chat-box");
 const chatInput=document.getElementById("chat-input");
 const sendBtn=document.getElementById("send-btn");
 const logoutBtn=document.getElementById("logout-btn");
+
 const friendsDiv=document.getElementById("friends");
 const storiesDiv=document.getElementById("stories");
 const postsDiv=document.getElementById("posts");
 
-// Auth
+const profilePic=document.getElementById("profile-pic");
+const usernameInput=document.getElementById("username");
+const bioInput=document.getElementById("bio");
+const updateProfileBtn=document.getElementById("update-profile");
+const newPostInput=document.getElementById("new-post");
+const postBtn=document.getElementById("post-btn");
+
+// ===== Auth =====
 signupBtn.onclick=()=>{
 createUserWithEmailAndPassword(auth,emailInput.value,passwordInput.value)
 .then(cred=>{
@@ -132,16 +153,71 @@ signInWithEmailAndPassword(auth,emailInput.value,passwordInput.value)
 
 logoutBtn.onclick=()=>signOut(auth).then(()=>location.reload());
 
+// ===== Init User =====
 function initUser(user){
 authCard.style.display="none";
 appDiv.style.display="block";
-set(ref(db,"users/"+user.uid),{email:user.email,online:true});
+set(ref(db,"users/"+user.uid),{
+email:user.email,
+online:true,
+username:user.email.split("@")[0],
+profilePic:profilePic.src,
+bio:""
+});
 updateFriends();
 updateStories();
 updatePosts();
+updateProfileUI(user);
 }
 
-// Chat
+// ===== Profile =====
+function updateProfileUI(user){
+onValue(ref(db,"users/"+user.uid),snapshot=>{
+const data=snapshot.val();
+if(data){
+profilePic.src=data.profilePic||"https://via.placeholder.com/60";
+usernameInput.value=data.username||user.email.split("@")[0];
+bioInput.value=data.bio||"";
+}
+});
+}
+
+updateProfileBtn.onclick=()=>{
+const user=auth.currentUser;
+update(ref(db,"users/"+user.uid),{
+username:usernameInput.value,
+bio:bioInput.value,
+profilePic:profilePic.src
+});
+};
+
+// ===== Posts =====
+postBtn.onclick=()=>{
+const user=auth.currentUser;
+if(newPostInput.value.trim()==="") return;
+push(ref(db,"posts"),{
+text:newPostInput.value,
+sender:user.email,
+avatar:user.email[0].toUpperCase(),
+time:new Date().toLocaleTimeString()
+});
+newPostInput.value="";
+};
+
+function updatePosts(){
+onValue(ref(db,"posts"),snapshot=>{
+postsDiv.innerHTML="";
+snapshot.forEach(snap=>{
+const post=snap.val();
+const div=document.createElement("div");
+div.className="post";
+div.innerHTML=`<div style="display:flex;align-items:center;margin-bottom:0.5em;"><div class="avatar">${post.avatar}</div><b>${post.sender}</b> <span style="font-size:0.8em;margin-left:5px;">${post.time}</span></div><p>${post.text}</p>`;
+postsDiv.appendChild(div);
+});
+});
+}
+
+// ===== Chat =====
 sendBtn.onclick=()=>{
 if(chatInput.value.trim()==="") return;
 const user=auth.currentUser;
@@ -163,7 +239,7 @@ chatBox.appendChild(div);
 chatBox.scrollTop=chatBox.scrollHeight;
 });
 
-// Friends
+// ===== Friends =====
 function updateFriends(){
 onValue(ref(db,"users"),snapshot=>{
 friendsDiv.innerHTML="";
@@ -171,51 +247,60 @@ snapshot.forEach(snap=>{
 const user=snap.val();
 const div=document.createElement("div");
 div.className="friend-item";
-div.innerHTML=`<span>${user.email}</span>${user.online?'<span class="online-dot"></span>':''}`;
+div.innerHTML=`<span>${user.username||user.email}</span>${user.online?'<span class="online-dot"></span>':''}`;
 friendsDiv.appendChild(div);
 });
 });
 }
 
-// Stories
+// ===== Stories עם תמונות אמיתיות =====
+const storyImages=[
+"https://picsum.photos/id/237/100",
+"https://picsum.photos/id/238/100",
+"https://picsum.photos/id/239/100",
+"https://picsum.photos/id/240/100",
+"https://picsum.photos/id/241/100",
+"https://picsum.photos/id/242/100",
+"https://picsum.photos/id/243/100",
+"https://picsum.photos/id/244/100",
+"https://picsum.photos/id/245/100",
+"https://picsum.photos/id/246/100"
+];
+
 function updateStories(){
 storiesDiv.innerHTML="";
-for(let i=0;i<10;i++){
+for(let i=0;i<storyImages.length;i++){
 const s=document.createElement("div");
 s.className="story";
-s.textContent="U"+(i+1);
+const img=document.createElement("img");
+img.src=storyImages[i];
+s.appendChild(img);
 storiesDiv.appendChild(s);
 }
 }
 
-// Posts
-function updatePosts(){
-postsDiv.innerHTML="";
-for(let i=0;i<5;i++){
-const p=document.createElement("div");
-p.className="post";
-p.innerHTML=`<b>User${i+1}</b><p>תוכן פוסט לדוגמה ${i+1}</p>`;
-postsDiv.appendChild(p);
+// ===== 5 Bots אמיתיים עם תמונות =====
+const bots = [
+{name:"Alice",pic:"https://i.pravatar.cc/60?img=1"},
+{name:"Bob",pic:"https://i.pravatar.cc/60?img=2"},
+{name:"Charlie",pic:"https://i.pravatar.cc/60?img=3"},
+{name:"Dana",pic:"https://i.pravatar.cc/60?img=4"},
+{name:"Eli",pic:"https://i.pravatar.cc/60?img=5"}
+];
+const botMessages = ["שלום לכולם!","איך הולך?","מישהו כאן?","איזה יום יפה היום","חחח","ממש מגניב!","אני מסכים"];
+
+bots.forEach(bot=>{
+function botAct(){
+const msg=botMessages[Math.floor(Math.random()*botMessages.length)];
+push(ref(db,"chat"),{text:msg,sender:bot.name,avatar:bot.name[0].toUpperCase(),time:new Date().toLocaleTimeString()});
+push(ref(db,"posts"),{text:msg,sender:bot.name,avatar:bot.name[0].toUpperCase(),time:new Date().toLocaleTimeString()});
+set(ref(db,"users/bot_"+bot.name),{email:bot.name,username:bot.name,online:true,profilePic:bot.pic});
+setTimeout(botAct,Math.random()*10000+5000);
 }
-}
+botAct();
+});
 
-// Bots Simulation
-const botNames=["Alice","Bob","Charlie","Dana","Eli","Fay","George","Hannah","Ian","Jack","Kira","Liam","Mona","Nina","Oscar","Paul","Quinn"];
-const botMessages=["שלום לכולם!","איך הולך?","מישהו כאן?","איזה יום יפה היום","מעניין...","מה חדש?","חחח","ממש מגניב!","אני מסכים","מה דעתכם?","lol","זה מצחיק","וואו","נחמד","מה שלומך?","נראה טוב","בהחלט"];
-
-function botActivity(botName){
-setInterval(()=>{
-const text=botMessages[Math.floor(Math.random()*botMessages.length)];
-const msg={text,sender:botName,avatar:botName[0].toUpperCase(),time:new Date().toLocaleTimeString()};
-push(ref(db,"chat"),msg);
-set(ref(db,"users/bot_"+botName),{email:botName,online:true});
-updateFriends();
-},Math.random()*8000+4000);
-}
-
-botNames.forEach(botActivity);
-
-// Monitor Auth State
+// ===== Monitor Auth State =====
 onAuthStateChanged(auth,user=>{
 if(user){initUser(user);}
 });
