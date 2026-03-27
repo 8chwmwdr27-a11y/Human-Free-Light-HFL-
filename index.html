@@ -107,7 +107,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebas
 import { getDatabase, ref, push, set, onValue, onChildAdded, update } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 
-// --- Firebase Config --- //
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
   authDomain: "hflsystem.firebaseapp.com",
@@ -118,11 +118,12 @@ const firebaseConfig = {
   appId: "1:469775027908:web:f3501f10942f58ba18c391",
   measurementId: "G-G4W68NT5T2"
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-// --- Elements --- //
+// Elements
 const authCard=document.getElementById("auth-card");
 const emailInput=document.getElementById("email");
 const passwordInput=document.getElementById("password");
@@ -152,14 +153,14 @@ const updateProfileBtn=document.getElementById("update-profile");
 const profileUpload=document.getElementById("profile-upload");
 const logoutBtn=document.getElementById("logout-btn");
 
-// --- Navigation --- //
+// Navigation
 function showPage(index){
 pages.forEach((p,i)=>{p.classList.remove("active");if(i===index)p.classList.add("active");});
 navButtons.forEach((b,i)=>b.classList.toggle("active",i===index));
 }
 navButtons.forEach((b,i)=>b.addEventListener("click",()=>showPage(i)));
 
-// --- Auth --- //
+// Auth
 signupBtn.onclick=()=>{
 createUserWithEmailAndPassword(auth,emailInput.value,passwordInput.value)
 .then(cred=>{authMsg.textContent="נרשמת בהצלחה!";initUser(cred.user);})
@@ -170,7 +171,7 @@ loginBtn.onclick=()=>signInWithEmailAndPassword(auth,emailInput.value,passwordIn
 .catch(err=>authMsg.textContent=err.message);
 logoutBtn.onclick=()=>signOut(auth).then(()=>location.reload());
 
-// --- Init User --- //
+// Init User
 function initUser(user){
 authCard.style.display="none";
 appDiv.classList.remove("hidden");
@@ -188,7 +189,7 @@ updateChat();
 updateProfileUI(user);
 }
 
-// --- Profile --- //
+// Profile
 function updateProfileUI(user){
 onValue(ref(db,"users/"+user.uid),snapshot=>{
 const data=snapshot.val();
@@ -207,7 +208,7 @@ username:usernameInput.value,bio:bioInput.value,profilePic:reader.result});};
 }else{update(ref(db,"users/"+user.uid),{username:usernameInput.value,bio:bioInput.value});}
 };
 
-// --- Posts --- //
+// Posts
 postBtn.onclick=()=>{
 const user=auth.currentUser;
 if(newPostInput.value.trim()==="") return;
@@ -238,22 +239,18 @@ div.innerHTML=`
 <div class="comments"></div>`;
 postsDiv.appendChild(div);
 
-// Like
 div.querySelector(".like-btn").onclick=()=>{update(ref(db,"posts/"+snap.key),{likes:(post.likes||0)+1});};
-
-// Comment
-const commentBtn=div.querySelector(".comment-btn");
-const commentsDiv=div.querySelector(".comments");
-commentBtn.onclick=()=>{
+div.querySelector(".comment-btn").onclick=()=>{
 const comment=prompt("כתוב תגובה:");
 if(comment){const updatedComments=post.comments||[];updatedComments.push({text:comment,sender:auth.currentUser.username||auth.currentUser.email});
 update(ref(db,"posts/"+snap.key),{comments:updatedComments});}
 };
+const commentsDiv=div.querySelector(".comments");
 if(post.comments) post.comments.forEach(c=>{const cdiv=document.createElement("div");cdiv.textContent=`${c.sender}: ${c.text}`;commentsDiv.appendChild(cdiv);});
 });
 }
 
-// --- Stories --- //
+// Stories
 const storyImages=["https://picsum.photos/id/237/100","https://picsum.photos/id/238/100","https://picsum.photos/id/239/100","https://picsum.photos/id/240/100","https://picsum.photos/id/241/100"];
 function updateStories(){storiesDiv.innerHTML="";for(let i=0;i<storyImages.length;i++){
 const s=document.createElement("div");s.className="story";const img=document.createElement("img");img.src=storyImages[i];s.appendChild(img);
@@ -261,7 +258,7 @@ const timer=document.createElement("div");timer.className="story-timer";s.append
 storiesDiv.appendChild(s);}
 }
 
-// --- Friends --- //
+// Friends
 function updateFriends(){
 onValue(ref(db,"users"),snapshot=>{
 friendsDiv.innerHTML="";
@@ -276,7 +273,7 @@ friendsDiv.appendChild(div);}
 }
 window.addFriend=(uid)=>{const current=auth.currentUser;set(ref(db,"users/"+current.uid+"/friends/"+uid),true);alert("המשתמש נוסף לחברים!");};
 
-// --- Chat --- //
+// Chat
 sendBtn.onclick=()=>{
 const user=auth.currentUser;if(chatInput.value.trim()==="") return;
 push(ref(db,"chat"),{text:chatInput.value,sender:user.username||user.email,avatar:user.username?user.username[0].toUpperCase():user.email[0].toUpperCase(),time:new Date().toLocaleTimeString()});
@@ -290,7 +287,7 @@ chatBox.appendChild(div);chatBox.scrollTop=chatBox.scrollHeight;
 });
 }
 
-// --- Bots --- //
+// Bots
 const bots=[{name:"Alice",pic:"https://i.pravatar.cc/60?img=1"},{name:"Bob",pic:"https://i.pravatar.cc/60?img=2"},{name:"Charlie",pic:"https://i.pravatar.cc/60?img=3"},{name:"Dana",pic:"https://i.pravatar.cc/60?img=4"},{name:"Eli",pic:"https://i.pravatar.cc/60?img=5"}];
 const botMessages=["שלום לכולם!","איך הולך?","מישהו כאן?","איזה יום יפה היום","חחח","ממש מגניב!","אני מסכים"];
 bots.forEach(bot=>{function botAct(){const msg=botMessages[Math.floor(Math.random()*botMessages.length)];
@@ -299,7 +296,7 @@ push(ref(db,"posts"),{text:msg,sender:bot.name,avatar:bot.name[0].toUpperCase(),
 set(ref(db,"users/bot_"+bot.name),{email:bot.name,username:bot.name,online:true,profilePic:bot.pic});
 setTimeout(botAct,Math.random()*10000+5000);}botAct();});
 
-// --- Auth State --- //
+// Auth State
 onAuthStateChanged(auth,user=>{if(user){initUser(user);}});
 </script>
 </body>
