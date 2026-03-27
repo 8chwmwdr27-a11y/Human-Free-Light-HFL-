@@ -1,106 +1,159 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HFL SUS Chat</title>
+<title>Human Free Light HFL</title>
 <style>
-/* ====== RESET & BASE ====== */
-* {margin:0;padding:0;box-sizing:border-box;font-family:sans-serif;}
-body {background:#0d1117;color:#c9d1d9;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;}
+/* ===========================
+   סגנון SUS מודרני לכל האתר
+=========================== */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #0a0f1a;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+}
+header {
+  background: #0d1b3a;
+  padding: 1em;
+  text-align: center;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #00f6ff;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1em;
+}
+.card {
+  background: #12192b;
+  padding: 1em;
+  margin: 1em 0;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  transition: transform 0.3s ease;
+}
+.card:hover { transform: scale(1.02); }
 
-/* ====== HEADER / NAV ====== */
-header {width:100%;background:#161b22;padding:1rem 0;text-align:center;font-size:1.5rem;font-weight:bold;color:#58a6ff;}
+input, button {
+  width: 100%;
+  padding: 0.8em;
+  margin: 0.5em 0;
+  border-radius: 8px;
+  border: none;
+  font-size: 1em;
+}
+input { background: #0d1b3a; color: #fff; }
+button { background: #00f6ff; color: #0a0f1a; font-weight: bold; cursor: pointer; transition: 0.3s; }
+button:hover { background: #00c8d8; }
 
-/* ====== CONTAINERS ====== */
-.container {width:95%;max-width:900px;margin-top:1rem;}
+.chat-box, .story-box, .feed-box, .friends-box {
+  background: #0d1b3a;
+  padding: 0.5em;
+  height: 250px;
+  overflow-y: auto;
+  border-radius: 8px;
+  margin-top: 1em;
+}
+.message, .story, .post, .friend {
+  margin: 0.5em 0;
+  display: flex;
+  align-items: center;
+  animation: fadeIn 0.5s;
+}
+.avatar {
+  width: 35px;
+  height: 35px;
+  background: #00f6ff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  margin-right: 0.5em;
+  color: #0a0f1a;
+}
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-left: 5px;
+  background: #00ff88;
+}
+@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
 
-/* ====== CARD LAYOUT ====== */
-.card {background:#161b22;padding:1rem;margin:1rem 0;border-radius:12px;box-shadow:0 0 20px rgba(88,166,255,0.2);}
-.card h2 {margin-bottom:0.5rem;color:#58a6ff;}
-.card input, .card button, .card textarea {width:100%;padding:0.7rem;margin:0.3rem 0;border-radius:8px;border:none;}
-.card button {background:#238636;color:white;font-weight:bold;cursor:pointer;transition:0.2s;}
-.card button:hover {background:#2ea043;transform:scale(1.05);}
-.card input:focus, .card textarea:focus {outline:none;box-shadow:0 0 8px #58a6ff;}
-
-/* ====== Chat & Messages ====== */
-.chat-box {height:300px;overflow-y:auto;background:#0d1117;padding:1rem;border-radius:12px;border:1px solid #30363d;}
-.message {margin:0.5rem 0;padding:0.5rem 0.7rem;border-radius:12px;max-width:80%;display:inline-block;}
-.message.self {background:#238636;color:white;align-self:flex-end;}
-.message.other {background:#1f6feb;color:white;align-self:flex-start;}
-
-/* ====== Online List ====== */
-.online-list {display:flex;flex-wrap:wrap;}
-.user-card {background:#161b22;padding:0.5rem 1rem;margin:0.5rem;border-radius:12px;cursor:pointer;transition:0.2s;display:flex;align-items:center;}
-.user-card:hover {background:#21262d;}
-.user-card img {width:40px;height:40px;border-radius:50%;margin-right:0.5rem;}
-.online-dot {width:10px;height:10px;border-radius:50%;background:#2ea043;margin-left:auto;animation:pulse 1.5s infinite;}
-@keyframes pulse {0% {transform:scale(0.8);}50% {transform:scale(1.2);}100% {transform:scale(0.8);}}
-
-/* ====== SUCCESS ANIMATION ====== */
-.success {background:#2ea043;color:white;padding:0.5rem;margin:0.5rem 0;border-radius:8px;text-align:center;animation:fadeIn 1s;}
-@keyframes fadeIn {from {opacity:0;} to {opacity:1;}}
-
-/* ====== HIDDEN ====== */
-.hidden {display:none;}
+.success { background: #00ff88 !important; color:#0a0f1a; }
 </style>
 </head>
 <body>
 
-<header>HFL SUS Chat Platform</header>
-<div class="container">
+<header>Human Free Light HFL</header>
+<main>
 
-  <!-- ====== REGISTRATION ====== -->
-  <div id="registerCard" class="card">
-    <h2>Sign Up</h2>
-    <input type="text" id="regName" placeholder="Full Name">
-    <input type="email" id="regEmail" placeholder="Email">
-    <input type="password" id="regPass" placeholder="Password">
-    <input type="file" id="regAvatar" accept="image/*">
-    <button id="registerBtn">Register</button>
-    <div id="regMsg" class="success hidden"></div>
-    <p>Already have an account? <span style="color:#58a6ff;cursor:pointer;" id="gotoLogin">Login</span></p>
+  <!-- =============================
+       Login / Sign up
+  ============================= -->
+  <div class="card" id="auth-card">
+    <h2 id="auth-title">כניסה / הרשמה</h2>
+    <input type="email" id="email" placeholder="אימייל">
+    <input type="password" id="password" placeholder="סיסמה">
+    <button id="login-btn">התחבר</button>
+    <button id="signup-btn">הרשם</button>
+    <p id="auth-msg"></p>
   </div>
 
-  <!-- ====== LOGIN ====== -->
-  <div id="loginCard" class="card hidden">
-    <h2>Login</h2>
-    <input type="email" id="loginEmail" placeholder="Email">
-    <input type="password" id="loginPass" placeholder="Password">
-    <button id="loginBtn">Login</button>
-    <div id="loginMsg" class="success hidden"></div>
-    <p>No account? <span style="color:#58a6ff;cursor:pointer;" id="gotoRegister">Sign Up</span></p>
-  </div>
+  <!-- =============================
+       User Area
+  ============================= -->
+  <div class="card" id="user-card" style="display:none;">
+    <h3>שלום <span id="user-name"></span></h3>
 
-  <!-- ====== PROFILE / CHAT ====== -->
-  <div id="mainCard" class="card hidden">
-    <h2>Welcome, <span id="userName">User</span></h2>
-    <img id="userAvatar" src="" alt="Avatar" style="width:80px;height:80px;border-radius:50%;margin-bottom:0.5rem;">
-    <div>
-      <input type="text" id="statusInput" placeholder="Update your status">
-      <button id="updateStatusBtn">Update Status</button>
+    <div class="friends-box" id="friends-box">
+      <h4>חברים אונליין</h4>
     </div>
 
-    <h3>Friends Online</h3>
-    <div class="online-list" id="onlineList"></div>
+    <div class="story-box" id="story-box">
+      <h4>Stories</h4>
+    </div>
 
-    <h3>Public Chat</h3>
-    <div class="chat-box" id="chatBox"></div>
-    <input type="text" id="chatInput" placeholder="Type a message">
-    <button id="sendChatBtn">Send</button>
+    <div class="feed-box" id="feed-box">
+      <h4>פוסטים</h4>
+    </div>
+
+    <div class="chat-box" id="chat-box"></div>
+    <input type="text" id="chat-input" placeholder="כתוב הודעה...">
+    <button id="send-btn">שלח</button>
+    <button id="logout-btn" style="background:#ff5050;">התנתק</button>
   </div>
 
-</div>
+  <!-- =============================
+       Admin Area
+  ============================= -->
+  <div class="card" id="admin-card" style="display:none;">
+    <h3>אזור מנהל</h3>
+    <div class="friends-box" id="admin-users-box">
+      <h4>כל המשתמשים</h4>
+    </div>
+  </div>
 
-<!-- ====== Firebase SDKs ====== -->
+</main>
+
+<!-- =========================
+     Firebase + JS
+========================= -->
 <script type="module">
-// Firebase Config
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-auth.js";
-import { getDatabase, ref, set, push, onValue, update } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-database.js";
-import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-storage.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+import { getDatabase, ref, push, onChildAdded, onValue } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 
-// Your Firebase Config
+// 🔹 Firebase Config שלך
 const firebaseConfig = {
   apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
   authDomain: "hflsystem.firebaseapp.com",
@@ -108,134 +161,134 @@ const firebaseConfig = {
   projectId: "hflsystem",
   storageBucket: "hflsystem.firebasestorage.app",
   messagingSenderId: "469775027908",
-  appId: "1:469775027908:web:f3501f10942f58ba18c391"
+  appId: "1:469775027908:web:f3501f10942f58ba18c391",
+  measurementId: "G-G4W68NT5T2"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth();
-const db = getDatabase();
-const storage = getStorage();
+const db = getDatabase(app);
+const auth = getAuth(app);
 
-// ====== NAVIGATION ======
-const registerCard = document.getElementById('registerCard');
-const loginCard = document.getElementById('loginCard');
-const mainCard = document.getElementById('mainCard');
+// ======================
+// Login / Sign up
+// ======================
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const loginBtn = document.getElementById("login-btn");
+const signupBtn = document.getElementById("signup-btn");
+const authMsg = document.getElementById("auth-msg");
 
-document.getElementById('gotoLogin').addEventListener('click', ()=>{registerCard.classList.add('hidden'); loginCard.classList.remove('hidden');});
-document.getElementById('gotoRegister').addEventListener('click', ()=>{loginCard.classList.add('hidden'); registerCard.classList.remove('hidden');});
-
-// ====== REGISTRATION ======
-document.getElementById('registerBtn').addEventListener('click', ()=>{
-  const name = document.getElementById('regName').value;
-  const email = document.getElementById('regEmail').value;
-  const pass = document.getElementById('regPass').value;
-  const avatarFile = document.getElementById('regAvatar').files[0];
-  
-  createUserWithEmailAndPassword(auth, email, pass)
-  .then(userCredential => {
-    const user = userCredential.user;
-    sendEmailVerification(user).then(()=>console.log("Verification sent"));
-    
-    const avatarRef = sRef(storage, 'avatars/' + user.uid);
-    if(avatarFile){
-      uploadBytes(avatarRef, avatarFile).then(()=>getDownloadURL(avatarRef)
-        .then(url=>{
-          updateProfile(user,{displayName:name, photoURL:url});
-          set(ref(db,'users/'+user.uid),{name,email,avatar:url,status:"Online"});
-          document.getElementById('regMsg').textContent="Registered! Verify Email✅"; 
-          document.getElementById('regMsg').classList.remove('hidden');
-        })
-      );
-    } else {
-      updateProfile(user,{displayName:name});
-      set(ref(db,'users/'+user.uid),{name,email,avatar:"",status:"Online"});
-      document.getElementById('regMsg').textContent="Registered! Verify Email✅"; 
-      document.getElementById('regMsg').classList.remove('hidden');
-    }
-  })
-  .catch(err=>alert(err.message));
-});
-
-// ====== LOGIN ======
-document.getElementById('loginBtn').addEventListener('click', ()=>{
-  const email = document.getElementById('loginEmail').value;
-  const pass = document.getElementById('loginPass').value;
-  
-  signInWithEmailAndPassword(auth,email,pass)
-  .then(userCredential=>{
-    const user = userCredential.user;
-    if(!user.emailVerified) {alert("Verify your email first!"); return;}
-    loginCard.classList.add('hidden');
-    mainCard.classList.remove('hidden');
-    loadProfile(user);
-    listenOnlineUsers();
-    listenChat();
-  })
-  .catch(err=>alert(err.message));
-});
-
-// ====== LOAD PROFILE ======
-function loadProfile(user){
-  document.getElementById('userName').textContent=user.displayName;
-  document.getElementById('userAvatar').src=user.photoURL || "https://via.placeholder.com/80";
+loginBtn.onclick = () => {
+  signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value)
+    .then((userCredential) => { 
+      showUser(userCredential.user);
+    })
+    .catch((err) => authMsg.textContent = err.message);
 }
 
-// ====== UPDATE STATUS ======
-document.getElementById('updateStatusBtn').addEventListener('click', ()=>{
-  const status = document.getElementById('statusInput').value;
-  const user = auth.currentUser;
-  update(ref(db,'users/'+user.uid),{status});
-  alert("Status Updated✅");
-});
-
-// ====== ONLINE USERS ======
-function listenOnlineUsers(){
-  const onlineList = document.getElementById('onlineList');
-  onValue(ref(db,'users/'), snapshot=>{
-    onlineList.innerHTML='';
-    snapshot.forEach(snap=>{
-      const u = snap.val();
-      const uid = snap.key;
-      const card = document.createElement('div');
-      card.classList.add('user-card');
-      card.innerHTML=`<img src="${u.avatar||'https://via.placeholder.com/40'}" alt="Avatar"><span>${u.name}</span>`;
-      if(u.status==="Online"){card.innerHTML+=`<div class="online-dot"></div>`;}
-      onlineList.appendChild(card);
-    });
-  });
+signupBtn.onclick = () => {
+  createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value)
+    .then((userCredential) => { 
+      sendEmailVerification(userCredential.user);
+      authMsg.textContent = "נרשמת בהצלחה! בדוק את האימייל לאימות.";
+    })
+    .catch((err) => authMsg.textContent = err.message);
 }
 
-// ====== CHAT ======
-const chatBox = document.getElementById('chatBox');
-document.getElementById('sendChatBtn').addEventListener('click', ()=>{
-  const user = auth.currentUser;
-  const msg = document.getElementById('chatInput').value;
-  if(!msg) return;
-  push(ref(db,'chat/'),{uid:user.uid,name:user.displayName,msg,avatar:user.photoURL||"",timestamp:Date.now()});
-  document.getElementById('chatInput').value='';
-});
+// ======================
+// Show User / Admin
+// ======================
+function showUser(user){
+  document.getElementById("auth-card").style.display = "none";
+  if(user.email === "ADMIN"){
+    document.getElementById("admin-card").style.display = "block";
+    loadAllUsers();
+  } else {
+    document.getElementById("user-card").style.display = "block";
+    document.getElementById("user-name").textContent = user.email.split("@")[0];
+    loadFriends();
+    loadChat();
+  }
+}
 
-function listenChat(){
-  onValue(ref(db,'chat/'), snapshot=>{
-    chatBox.innerHTML='';
-    snapshot.forEach(snap=>{
-      const c = snap.val();
-      const div = document.createElement('div');
-      div.classList.add('message');
-      div.classList.add(c.uid===auth.currentUser.uid?"self":"other");
-      div.innerHTML=`<strong>${c.name}:</strong> ${c.msg}`;
-      chatBox.appendChild(div);
-    });
+// ======================
+// Chat
+// ======================
+const chatBox = document.getElementById("chat-box");
+const chatInput = document.getElementById("chat-input");
+const sendBtn = document.getElementById("send-btn");
+
+sendBtn.onclick = () => {
+  const user = auth.currentUser;
+  if(!user || chatInput.value.trim()==="") return;
+  const msg = {
+    text: chatInput.value,
+    sender: user.email,
+    avatar: user.email[0].toUpperCase(),
+    time: new Date().toLocaleTimeString()
+  };
+  push(ref(db,"chat"), msg);
+  chatInput.value = "";
+};
+
+function loadChat(){
+  onChildAdded(ref(db,"chat"), (data)=>{
+    const msg = data.val();
+    const div = document.createElement("div");
+    div.className = "message";
+    div.innerHTML = `<div class="avatar">${msg.avatar}</div><div><strong>${msg.sender}</strong>: ${msg.text} <small>${msg.time}</small></div>`;
+    chatBox.appendChild(div);
     chatBox.scrollTop = chatBox.scrollHeight;
   });
 }
 
-// ====== PRESENCE ======
-onAuthStateChanged(auth, user=>{
-  if(user) update(ref(db,'users/'+user.uid),{status:"Online"});
-  window.addEventListener('beforeunload', ()=>{if(user) update(ref(db,'users/'+user.uid),{status:"Offline"});});
+// ======================
+// Friends & Stories
+// ======================
+const friendsBox = document.getElementById("friends-box");
+function loadFriends(){
+  onValue(ref(db,"users"), (snapshot)=>{
+    friendsBox.innerHTML = "<h4>חברים אונליין</h4>";
+    snapshot.forEach((child)=>{
+      const u = child.val();
+      if(u.email!==auth.currentUser.email){
+        const div = document.createElement("div");
+        div.className = "friend";
+        div.innerHTML = `<div class="avatar">${u.email[0].toUpperCase()}</div>${u.email}<div class="status-dot"></div>`;
+        friendsBox.appendChild(div);
+      }
+    });
+  });
+}
+
+// ======================
+// Admin load all users
+// ======================
+function loadAllUsers(){
+  const adminBox = document.getElementById("admin-users-box");
+  onValue(ref(db,"users"), (snapshot)=>{
+    adminBox.innerHTML = "<h4>כל המשתמשים</h4>";
+    snapshot.forEach((child)=>{
+      const u = child.val();
+      const div = document.createElement("div");
+      div.textContent = u.email;
+      adminBox.appendChild(div);
+    });
+  });
+}
+
+// ======================
+// Auth state change
+// ======================
+onAuthStateChanged(auth, (user)=>{
+  if(user){
+    showUser(user);
+  }
 });
+
+document.getElementById("logout-btn").onclick = () => {
+  signOut(auth).then(()=>location.reload());
+};
 </script>
 </body>
 </html>
