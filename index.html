@@ -3,34 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HUMAN FREE LIGHT - SUS Modern</title>
+<title>HFL Chat - SUS Modern</title>
+
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
 
 <style>
 /* =======================
-   SUS Modern Styling
+   SUS Modern WhatsApp-like
 ======================= */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
-
-* { box-sizing:border-box; margin:0; padding:0; }
 body {
   font-family:'Orbitron', sans-serif;
   background: linear-gradient(135deg,#0D1B2A,#1B263B);
   color:#E0E1DD;
+  margin:0;
+  padding:0;
 }
 header {
   background:#1B263B;
-  padding:20px;
   text-align:center;
-  font-size:2.2em;
-  font-weight:bold;
+  padding:20px;
+  font-size:2em;
   color:#F0A500;
   text-shadow:0 0 10px #FFC857;
 }
 nav {
   display:flex;
   justify-content:center;
-  gap:20px;
-  padding:15px;
+  gap:15px;
+  padding:10px;
   background:#162447;
   box-shadow:0 4px 20px rgba(0,0,0,0.5);
 }
@@ -40,313 +41,174 @@ nav a {
   font-weight:bold;
   transition:0.3s;
 }
-nav a:hover {
-  color:#F0A500;
-  transform:scale(1.1);
-}
-main { padding:20px; max-width:1200px; margin:auto; }
-.section {
-  margin-bottom:50px;
-  padding:25px;
-  border-radius:15px;
-  background:rgba(27,38,59,0.9);
-  box-shadow:0 0 30px #0F4C75;
-  animation: fadeIn 1s ease-in;
-}
-button {
-  background:#F0A500;
-  color:#0D1B2A;
-  border:none;
-  padding:12px 25px;
-  font-weight:bold;
-  cursor:pointer;
-  border-radius:8px;
-  transition:0.3s;
-  box-shadow:0 0 10px #FFC857;
-}
-button:hover {
-  background:#FFC857;
-  transform:scale(1.05);
-}
-input,textarea {
-  width:100%;
-  padding:12px;
-  margin:8px 0 18px 0;
-  border-radius:8px;
-  border:none;
-}
-.success {
-  color:#00FF7F;
-  font-weight:bold;
-  margin:10px 0;
-  animation: pop 0.5s ease-in-out;
-}
-.member-count {
-  font-size:1.6em;
-  color:#00FF7F;
-  margin-top:15px;
-  font-weight:bold;
-  animation: glow 2s infinite alternate;
-}
-.chat-box,.chat-message {
-  border:1px solid #0F4C75;
-  padding:12px;
-  border-radius:8px;
-  margin-bottom:12px;
-  background: rgba(27,38,59,0.7);
-  animation: fadeIn 0.5s ease-in;
-}
-.chat-message span { font-weight:bold; color:#FFC857; }
-.online-dot {
-  display:inline-block;
-  width:12px; height:12px;
-  border-radius:50%;
-  background:#00FF7F;
-  margin-right:8px;
-  animation: pulse 1.5s infinite;
-}
-.user-card {
-  border:1px solid #0F4C75;
-  padding:12px;
-  margin:8px 0;
-  border-radius:8px;
-  background:rgba(27,38,59,0.6);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  animation: fadeIn 0.5s ease-in;
-}
-.user-actions button { margin-left:6px; font-size:0.9em; }
+nav a:hover { color:#F0A500; transform:scale(1.1); }
 
-/* Animations */
-@keyframes pulse { 0% { transform:scale(0.9); opacity:0.7; } 50% { transform:scale(1.2); opacity:1; } 100% { transform:scale(0.9); opacity:0.7; } }
-@keyframes glow { 0% { text-shadow:0 0 5px #00FF7F; } 100% { text-shadow:0 0 20px #00FF7F; } }
-@keyframes pop { 0% { transform:scale(0); opacity:0; } 100% { transform:scale(1); opacity:1; } }
+main { max-width:900px; margin:auto; padding:15px; }
+
+.section {
+  background: rgba(27,38,59,0.95);
+  padding:20px;
+  border-radius:12px;
+  margin-bottom:25px;
+  box-shadow:0 0 20px #0F4C75;
+}
+
+/* Forms */
+input,textarea { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:none; }
+button {
+  background:#F0A500; color:#0D1B2A; border:none;
+  padding:10px 20px; border-radius:8px; font-weight:bold;
+  cursor:pointer; transition:0.3s; box-shadow:0 0 10px #FFC857;
+}
+button:hover { background:#FFC857; transform:scale(1.05); }
+
+/* Chat */
+.chat-container { display:flex; flex-direction:column; max-height:400px; overflow-y:auto; }
+.chat-message { padding:8px 12px; border-radius:12px; margin:5px 0; max-width:75%; animation:fadeIn 0.5s; }
+.chat-message.me { background:#00FF7F; color:#0D1B2A; align-self:flex-end; }
+.chat-message.other { background:#1B263B; border:1px solid #0F4C75; color:#E0E1DD; align-self:flex-start; }
+.online-dot { display:inline-block; width:10px; height:10px; border-radius:50%; background:#00FF7F; margin-right:5px; animation:pulse 1.5s infinite; }
+
+@keyframes pulse { 0%{transform:scale(0.9);opacity:0.7;}50%{transform:scale(1.2);opacity:1;}100%{transform:scale(0.9);opacity:0.7;} }
 @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+.success { color:#00FF7F; font-weight:bold; margin-top:10px; animation:pop 0.5s ease-in-out; }
+@keyframes pop { 0%{transform:scale(0);opacity:0;} 100%{transform:scale(1);opacity:1;} }
+
+.user-card { display:flex; justify-content:space-between; padding:8px; margin:5px 0; border-radius:8px; background: rgba(27,38,59,0.7); align-items:center; animation:fadeIn 0.5s; }
+.user-actions button { margin-left:5px; font-size:0.9em; }
 </style>
 </head>
 
 <body>
-<header>HUMAN FREE LIGHT - SUS Modern</header>
+<header>HFL Chat System 🔥</header>
 <nav>
-    <a href="#home">Home</a>
-    <a href="#about">About</a>
-    <a href="#join">Join</a>
-    <a href="#login">Login</a>
-    <a href="#chat">Chat</a>
-    <a href="#hierarchy">Hierarchy</a>
-    <a href="#legislation">Legislation</a>
+  <a href="#register">Register</a>
+  <a href="#login">Login</a>
+  <a href="#chat">Chat</a>
 </nav>
 
 <main>
-<!-- Home -->
-<section id="home" class="section">
-<h2>Welcome to HFL 🌟</h2>
-<p>Empowering human freedom, building an alternative civic organization, and preparing members for autonomous action. ✨</p>
-<div class="member-count">Total Members: <span id="totalMembers">0</span></div>
-</section>
-
-<!-- About -->
-<section id="about" class="section">
-<h2>About Us</h2>
-<p>HUMAN FREE LIGHT is a civic organization promoting individual freedom. We build temporary structures to empower members and disband after achieving objectives. 🕊️</p>
-</section>
-
-<!-- Join -->
-<section id="join" class="section">
-<h2>Join HFL</h2>
-<input type="text" id="joinName" placeholder="Your Name">
-<input type="email" id="joinEmail" placeholder="Your Email">
-<input type="password" id="joinPassword" placeholder="Create Password">
-<small>Password: 8+ chars, include a number 🔑</small>
-<button onclick="registerUser()">Submit</button>
-<div id="joinSuccess" class="success"></div>
+<!-- Register -->
+<section id="register" class="section">
+<h2>Register ✨</h2>
+<input type="text" id="regName" placeholder="Full Name">
+<input type="email" id="regEmail" placeholder="Email">
+<input type="password" id="regPass" placeholder="Password (8+ chars, number)">
+<button onclick="register()">Register</button>
+<div id="regSuccess" class="success"></div>
 </section>
 
 <!-- Login -->
 <section id="login" class="section">
-<h2>Login</h2>
-<input type="email" id="loginEmail" placeholder="Email">
-<input type="password" id="loginPassword" placeholder="Password">
-<button onclick="loginUser()">Login</button>
-<div id="loginSuccess" class="success"></div>
+<h2>Login 🔑</h2>
+<input type="email" id="logEmail" placeholder="Email">
+<input type="password" id="logPass" placeholder="Password">
+<button onclick="login()">Login</button>
+<div id="logSuccess" class="success"></div>
 </section>
 
 <!-- Chat -->
 <section id="chat" class="section">
 <h2>Live Chat 🗨️</h2>
-<div id="chatBox" class="chat-box"></div>
-<input type="text" id="chatInput" placeholder="Type message..." onkeypress="if(event.key==='Enter'){sendMessage();}">
-<button onclick="sendMessage()">Send</button>
+<div id="chatBox" class="chat-container"></div>
+<input type="text" id="chatInput" placeholder="Type message..." onkeypress="if(event.key==='Enter'){sendMsg();}">
+<button onclick="sendMsg()">Send</button>
 
-<h3>Online Members</h3>
-<div id="onlineMembers"></div>
-</section>
-
-<!-- Hierarchy -->
-<section id="hierarchy" class="section">
-<h2>Organization Hierarchy 📊</h2>
-<div id="hierarchyContainer"></div>
-</section>
-
-<!-- Legislation -->
-<section id="legislation" class="section">
-<h2>Legislation / Code of Conduct 📝</h2>
-<div id="legislationContainer"></div>
+<h3>Online Users</h3>
+<div id="onlineList"></div>
 </section>
 
 <!-- ===================
-     Firebase SDK
+     Firebase
 =================== -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <script>
-// 🔹 Firebase Config
+// Firebase Config
 const firebaseConfig = {
-  apiKey: "<YOUR_FIREBASE_API_KEY>",
-  authDomain: "<YOUR_FIREBASE_AUTH_DOMAIN>",
-  databaseURL: "<YOUR_FIREBASE_DB_URL>",
-  projectId: "<YOUR_FIREBASE_PROJECT_ID>",
-  storageBucket: "<YOUR_FIREBASE_STORAGE_BUCKET>",
-  messagingSenderId: "<YOUR_FIREBASE_MSG_SENDER_ID>",
-  appId: "<YOUR_FIREBASE_APP_ID>"
+  apiKey:"<YOUR_FIREBASE_API_KEY>",
+  authDomain:"<YOUR_FIREBASE_AUTH_DOMAIN>",
+  databaseURL:"<YOUR_FIREBASE_DB_URL>",
+  projectId:"<YOUR_FIREBASE_PROJECT_ID>",
+  storageBucket:"<YOUR_FIREBASE_STORAGE_BUCKET>",
+  messagingSenderId:"<YOUR_FIREBASE_MSG_SENDER_ID>",
+  appId:"<YOUR_FIREBASE_APP_ID>"
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 
 // ===================
-// Member Count
+// Register
 // ===================
-const totalMembersElem = document.getElementById('totalMembers');
-db.ref('members').on('value', snapshot=>{
-  totalMembersElem.textContent = snapshot.numChildren();
-});
-
-// ===================
-// Register User
-// ===================
-function registerUser(){
-  const name = document.getElementById('joinName').value;
-  const email = document.getElementById('joinEmail').value;
-  const password = document.getElementById('joinPassword').value;
-  if(password.length<8 || !/\d/.test(password)){ alert('Password must be 8+ chars and include a number'); return; }
-  auth.createUserWithEmailAndPassword(email,password)
-    .then(userCredential=>{
-      const uid = userCredential.user.uid;
-      db.ref('members/'+uid).set({name,email,role:'agent'});
-      document.getElementById('joinSuccess').textContent='✅ Registered successfully!';
-    })
-    .catch(error=>alert(error.message));
+function register(){
+  const name=document.getElementById('regName').value;
+  const email=document.getElementById('regEmail').value;
+  const pass=document.getElementById('regPass').value;
+  if(pass.length<8||!/\d/.test(pass)){ alert('Password must be 8+ chars & include number'); return; }
+  auth.createUserWithEmailAndPassword(email,pass)
+  .then(u=>{
+    db.ref('users/'+u.user.uid).set({name,email});
+    document.getElementById('regSuccess').textContent='✅ Registered! Check your email for verification';
+    u.user.sendEmailVerification();
+  })
+  .catch(err=>alert(err.message));
 }
 
 // ===================
-// Login User
+// Login
 // ===================
-function loginUser(){
-  const email = document.getElementById('loginEmail').value;
-  const password = document.getElementById('loginPassword').value;
-  auth.signInWithEmailAndPassword(email,password)
-    .then(userCredential=>{
-      document.getElementById('loginSuccess').textContent='✅ Logged in!';
-      loadOnlineMembers();
-      loadHierarchy();
-      loadLegislation();
-    })
-    .catch(error=>alert(error.message));
+function login(){
+  const email=document.getElementById('logEmail').value;
+  const pass=document.getElementById('logPass').value;
+  auth.signInWithEmailAndPassword(email,pass)
+  .then(u=>{
+    if(!u.user.emailVerified){ alert('Please verify email first'); return; }
+    document.getElementById('logSuccess').textContent='✅ Logged in!';
+    loadChat();
+    loadOnlineUsers();
+  })
+  .catch(err=>alert(err.message));
 }
 
 // ===================
 // Chat
 // ===================
-const chatBox = document.getElementById('chatBox');
-function sendMessage(){
-  const msg = document.getElementById('chatInput').value;
-  const user = auth.currentUser;
-  if(!user || !msg) return;
-  db.ref('chat').push({uid:user.uid,email:user.email,message:msg});
+const chatBox=document.getElementById('chatBox');
+function sendMsg(){
+  const msg=document.getElementById('chatInput').value;
+  const user=auth.currentUser;
+  if(!user||!msg) return;
+  db.ref('chat').push({uid:user.uid,name:user.displayName||user.email,message:msg});
   document.getElementById('chatInput').value='';
 }
-db.ref('chat').on('child_added', snapshot=>{
-  const data = snapshot.val();
-  const div = document.createElement('div');
-  div.className='chat-message';
-  div.innerHTML=`<span>${data.email}:</span> ${data.message}`;
-  chatBox.appendChild(div);
-  chatBox.scrollTop = chatBox.scrollHeight;
-});
+function loadChat(){
+  db.ref('chat').on('child_added',snap=>{
+    const d=snap.val();
+    const div=document.createElement('div');
+    div.className=d.uid===auth.currentUser.uid?'chat-message me':'chat-message other';
+    div.innerHTML=`<strong>${d.name}:</strong> ${d.message}`;
+    chatBox.appendChild(div);
+    chatBox.scrollTop=chatBox.scrollHeight;
+  });
+}
 
 // ===================
-// Online Members
+// Online Users
 // ===================
-function loadOnlineMembers(){
-  const container = document.getElementById('onlineMembers');
-  container.innerHTML='';
-  db.ref('members').on('value', snapshot=>{
-    container.innerHTML='';
-    snapshot.forEach(child=>{
-      const member = child.val();
-      const uid = child.key;
-      const div = document.createElement('div');
+function loadOnlineUsers(){
+  const list=document.getElementById('onlineList');
+  db.ref('users').on('value',snap=>{
+    list.innerHTML='';
+    snap.forEach(child=>{
+      const u=child.val();
+      const div=document.createElement('div');
       div.className='user-card';
-      div.innerHTML=`<div><span class="online-dot"></span>${member.name}</div>
-        <div class="user-actions">
-        <button onclick="createAlliance('${uid}','${member.name}')">Alliance 🤝</button>
-        <button onclick="reportUser('${uid}','${member.name}')">Report ⚠️</button>
-        </div>`;
-      container.appendChild(div);
+      div.innerHTML=`<span class="online-dot"></span>${u.name}`;
+      list.appendChild(div);
     });
-  });
-}
-
-function createAlliance(uid,name){
-  const user = auth.currentUser;
-  if(!user) return alert('Login first');
-  db.ref(`alliances/${uid}`).push({from:user.uid,fromName:user.email});
-  alert(`✅ Alliance request sent to ${name}`);
-}
-
-function reportUser(uid,name){
-  const user = auth.currentUser;
-  if(!user) return alert('Login first');
-  db.ref(`reports`).push({from:user.uid,fromName:user.email,to:uid,toName:name});
-  alert(`⚠️ Report sent for ${name}`);
-}
-
-// ===================
-// Hierarchy
-// ===================
-function loadHierarchy(){
-  const container = document.getElementById('hierarchyContainer');
-  container.innerHTML='<p>Loading hierarchy...</p>';
-  db.ref('members').on('value', snapshot=>{
-    const members = snapshot.val();
-    container.innerHTML='';
-    for(let role of ['admin','commander','deputy','agent']){
-      const roleDiv = document.createElement('div');
-      roleDiv.innerHTML=`<h4>${role.toUpperCase()}</h4>`;
-      for(let key in members){
-        if(members[key].role===role) roleDiv.innerHTML+=`<div>${members[key].name}</div>`;
-      }
-      container.appendChild(roleDiv);
-    }
-  });
-}
-
-// ===================
-// Legislation
-// ===================
-function loadLegislation(){
-  const container = document.getElementById('legislationContainer');
-  container.innerHTML='<p>Loading legislation...</p>';
-  db.ref('legislation').on('value', snapshot=>{
-    const data = snapshot.val();
-    container.innerHTML='';
-    for(let key in data){
-      container.innerHTML+=`<div>• ${data[key].text}</div>`;
-    }
   });
 }
 </script>
