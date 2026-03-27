@@ -1,15 +1,24 @@
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {getFirestore,collection,addDoc,getDocs,updateDoc,doc} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// 🔥 Firebase Config - החלף עם שלך!
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "PASTE_YOUR_FIREBASE_APIKEY",
-  authDomain: "PASTE_YOUR_PROJECT.firebaseapp.com",
-  projectId: "PASTE_YOUR_PROJECT_ID",
-  storageBucket: "PASTE_YOUR_PROJECT.appspot.com",
-  messagingSenderId: "PASTE_YOUR_SENDER_ID",
-  appId: "PASTE_YOUR_APP_ID"
+  apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
+  authDomain: "hflsystem.firebaseapp.com",
+  databaseURL: "https://hflsystem-default-rtdb.firebaseio.com",
+  projectId: "hflsystem",
+  storageBucket: "hflsystem.firebasestorage.app",
+  messagingSenderId: "469775027908",
+  appId: "1:469775027908:web:f3501f10942f58ba18c391"
 };
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
