@@ -3,292 +3,222 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Human Free Light HFL</title>
+<title>HFL Social SUS App</title>
 <style>
 /* ===========================
-   סגנון SUS מודרני לכל האתר
+   SUS Modern Styles
 =========================== */
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #0a0f1a;
-  color: #fff;
-  margin: 0;
-  padding: 0;
-}
-header {
-  background: #0d1b3a;
-  padding: 1em;
-  text-align: center;
-  font-size: 1.5em;
-  font-weight: bold;
-  color: #00f6ff;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-}
-main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1em;
-}
-.card {
-  background: #12192b;
-  padding: 1em;
-  margin: 1em 0;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-  transition: transform 0.3s ease;
-}
-.card:hover { transform: scale(1.02); }
-
-input, button {
-  width: 100%;
-  padding: 0.8em;
-  margin: 0.5em 0;
-  border-radius: 8px;
-  border: none;
-  font-size: 1em;
-}
-input { background: #0d1b3a; color: #fff; }
-button { background: #00f6ff; color: #0a0f1a; font-weight: bold; cursor: pointer; transition: 0.3s; }
-button:hover { background: #00c8d8; }
-
-.chat-box, .story-box, .feed-box, .friends-box {
-  background: #0d1b3a;
-  padding: 0.5em;
-  height: 250px;
-  overflow-y: auto;
-  border-radius: 8px;
-  margin-top: 1em;
-}
-.message, .story, .post, .friend {
-  margin: 0.5em 0;
-  display: flex;
-  align-items: center;
-  animation: fadeIn 0.5s;
-}
-.avatar {
-  width: 35px;
-  height: 35px;
-  background: #00f6ff;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-  margin-right: 0.5em;
-  color: #0a0f1a;
-}
-.status-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-left: 5px;
-  background: #00ff88;
-}
-@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
-
-.success { background: #00ff88 !important; color:#0a0f1a; }
+body {font-family:'Segoe UI',sans-serif;background:#0a0f1a;color:#fff;margin:0;padding:0;}
+header{background:#0d1b3a;padding:1em;text-align:center;font-size:1.5em;font-weight:bold;color:#00f6ff;box-shadow:0 4px 6px rgba(0,0,0,0.3);}
+main{display:flex;flex-direction:column;align-items:center;padding:1em;}
+.card{background:#12192b;padding:1em;margin:1em 0;border-radius:10px;width:90%;max-width:500px;box-shadow:0 4px 10px rgba(0,0,0,0.5);transition:transform 0.3s ease;}
+.card:hover{transform:scale(1.02);}
+input,button{width:100%;padding:0.8em;margin:0.5em 0;border-radius:8px;border:none;font-size:1em;}
+input{background:#0d1b3a;color:#fff;}
+button{background:#00f6ff;color:#0a0f1a;font-weight:bold;cursor:pointer;transition:0.3s;}
+button:hover{background:#00c8d8;}
+.chat-box{background:#0d1b3a;padding:0.5em;height:300px;overflow-y:auto;border-radius:8px;margin-top:1em;}
+.message{margin:0.5em 0;display:flex;align-items:center;animation:fadeIn 0.5s;}
+.avatar{width:35px;height:35px;background:#00f6ff;border-radius:50%;display:flex;justify-content:center;align-items:center;font-weight:bold;margin-right:0.5em;color:#0a0f1a;}
+.online-dot{width:10px;height:10px;border-radius:50%;background:#00ff88;display:inline-block;margin-left:5px;}
+.friend-list{background:#0d1b3a;padding:0.5em;border-radius:8px;margin-top:1em;max-height:150px;overflow-y:auto;}
+.friend-item{padding:0.3em 0;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #222;}
+.story-container{display:flex;overflow-x:auto;margin:0.5em 0;}
+.story{min-width:60px;height:60px;background:#00f6ff;border-radius:50%;margin-right:0.5em;display:flex;justify-content:center;align-items:center;color:#0a0f1a;font-weight:bold;cursor:pointer;transition:0.3s;}
+.story:hover{transform:scale(1.2);}
+.post{background:#0d1b3a;padding:0.5em;margin:0.5em 0;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.4);}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 </style>
 </head>
 <body>
 
-<header>Human Free Light HFL</header>
+<header>HFL Social SUS</header>
 <main>
 
-  <!-- =============================
-       Login / Sign up
-  ============================= -->
-  <div class="card" id="auth-card">
-    <h2 id="auth-title">כניסה / הרשמה</h2>
-    <input type="email" id="email" placeholder="אימייל">
-    <input type="password" id="password" placeholder="סיסמה">
-    <button id="login-btn">התחבר</button>
-    <button id="signup-btn">הרשם</button>
-    <p id="auth-msg"></p>
-  </div>
+<!-- Auth -->
+<div class="card" id="auth-card">
+<h2>כניסה / הרשמה</h2>
+<input type="email" id="email" placeholder="אימייל">
+<input type="password" id="password" placeholder="סיסמה">
+<button id="login-btn">התחבר</button>
+<button id="signup-btn">הרשם</button>
+<p id="auth-msg"></p>
+</div>
 
-  <!-- =============================
-       User Area
-  ============================= -->
-  <div class="card" id="user-card" style="display:none;">
-    <h3>שלום <span id="user-name"></span></h3>
+<!-- App -->
+<div id="app" style="display:none;width:100%;max-width:600px;">
 
-    <div class="friends-box" id="friends-box">
-      <h4>חברים אונליין</h4>
-    </div>
+<!-- Stories -->
+<div class="card">
+<h3>סטוריז</h3>
+<div id="stories" class="story-container"></div>
+</div>
 
-    <div class="story-box" id="story-box">
-      <h4>Stories</h4>
-    </div>
+<!-- Friends List -->
+<div class="card">
+<h3>רשימת חברים</h3>
+<div id="friends" class="friend-list"></div>
+</div>
 
-    <div class="feed-box" id="feed-box">
-      <h4>פוסטים</h4>
-    </div>
+<!-- Posts -->
+<div class="card">
+<h3>פוסטים</h3>
+<div id="posts"></div>
+</div>
 
-    <div class="chat-box" id="chat-box"></div>
-    <input type="text" id="chat-input" placeholder="כתוב הודעה...">
-    <button id="send-btn">שלח</button>
-    <button id="logout-btn" style="background:#ff5050;">התנתק</button>
-  </div>
+<!-- Chat -->
+<div class="card">
+<h3>צ׳אט ציבורי</h3>
+<div class="chat-box" id="chat-box"></div>
+<input type="text" id="chat-input" placeholder="כתוב הודעה...">
+<button id="send-btn">שלח</button>
+<button id="logout-btn" style="background:#ff5050;">התנתק</button>
+</div>
 
-  <!-- =============================
-       Admin Area
-  ============================= -->
-  <div class="card" id="admin-card" style="display:none;">
-    <h3>אזור מנהל</h3>
-    <div class="friends-box" id="admin-users-box">
-      <h4>כל המשתמשים</h4>
-    </div>
-  </div>
+</div>
 
-</main>
-
-<!-- =========================
-     Firebase + JS
-========================= -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded, onValue } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+import { getDatabase, ref, push, set, onValue, onChildAdded } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 
-// 🔹 Firebase Config שלך
+// Firebase Config
 const firebaseConfig = {
-  apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
-  authDomain: "hflsystem.firebaseapp.com",
-  databaseURL: "https://hflsystem-default-rtdb.firebaseio.com",
-  projectId: "hflsystem",
-  storageBucket: "hflsystem.firebasestorage.app",
-  messagingSenderId: "469775027908",
-  appId: "1:469775027908:web:f3501f10942f58ba18c391",
-  measurementId: "G-G4W68NT5T2"
+apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
+authDomain: "hflsystem.firebaseapp.com",
+databaseURL: "https://hflsystem-default-rtdb.firebaseio.com",
+projectId: "hflsystem",
+storageBucket: "hflsystem.firebasestorage.app",
+messagingSenderId: "469775027908",
+appId: "1:469775027908:web:f3501f10942f58ba18c391",
+measurementId: "G-G4W68NT5T2"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-// ======================
-// Login / Sign up
-// ======================
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-const loginBtn = document.getElementById("login-btn");
-const signupBtn = document.getElementById("signup-btn");
-const authMsg = document.getElementById("auth-msg");
+// Elements
+const emailInput=document.getElementById("email");
+const passwordInput=document.getElementById("password");
+const loginBtn=document.getElementById("login-btn");
+const signupBtn=document.getElementById("signup-btn");
+const authMsg=document.getElementById("auth-msg");
+const authCard=document.getElementById("auth-card");
+const appDiv=document.getElementById("app");
+const chatBox=document.getElementById("chat-box");
+const chatInput=document.getElementById("chat-input");
+const sendBtn=document.getElementById("send-btn");
+const logoutBtn=document.getElementById("logout-btn");
+const friendsDiv=document.getElementById("friends");
+const storiesDiv=document.getElementById("stories");
+const postsDiv=document.getElementById("posts");
 
-loginBtn.onclick = () => {
-  signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value)
-    .then((userCredential) => { 
-      showUser(userCredential.user);
-    })
-    .catch((err) => authMsg.textContent = err.message);
-}
-
-signupBtn.onclick = () => {
-  createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value)
-    .then((userCredential) => { 
-      sendEmailVerification(userCredential.user);
-      authMsg.textContent = "נרשמת בהצלחה! בדוק את האימייל לאימות.";
-    })
-    .catch((err) => authMsg.textContent = err.message);
-}
-
-// ======================
-// Show User / Admin
-// ======================
-function showUser(user){
-  document.getElementById("auth-card").style.display = "none";
-  if(user.email === "ADMIN"){
-    document.getElementById("admin-card").style.display = "block";
-    loadAllUsers();
-  } else {
-    document.getElementById("user-card").style.display = "block";
-    document.getElementById("user-name").textContent = user.email.split("@")[0];
-    loadFriends();
-    loadChat();
-  }
-}
-
-// ======================
-// Chat
-// ======================
-const chatBox = document.getElementById("chat-box");
-const chatInput = document.getElementById("chat-input");
-const sendBtn = document.getElementById("send-btn");
-
-sendBtn.onclick = () => {
-  const user = auth.currentUser;
-  if(!user || chatInput.value.trim()==="") return;
-  const msg = {
-    text: chatInput.value,
-    sender: user.email,
-    avatar: user.email[0].toUpperCase(),
-    time: new Date().toLocaleTimeString()
-  };
-  push(ref(db,"chat"), msg);
-  chatInput.value = "";
+// Auth
+signupBtn.onclick=()=>{
+createUserWithEmailAndPassword(auth,emailInput.value,passwordInput.value)
+.then(cred=>{
+authMsg.textContent="נרשמת בהצלחה!";
+initUser(cred.user);
+})
+.catch(err=>authMsg.textContent=err.message);
 };
 
-function loadChat(){
-  onChildAdded(ref(db,"chat"), (data)=>{
-    const msg = data.val();
-    const div = document.createElement("div");
-    div.className = "message";
-    div.innerHTML = `<div class="avatar">${msg.avatar}</div><div><strong>${msg.sender}</strong>: ${msg.text} <small>${msg.time}</small></div>`;
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  });
+loginBtn.onclick=()=>{
+signInWithEmailAndPassword(auth,emailInput.value,passwordInput.value)
+.then(cred=>initUser(cred.user))
+.catch(err=>authMsg.textContent=err.message);
+};
+
+logoutBtn.onclick=()=>signOut(auth).then(()=>location.reload());
+
+function initUser(user){
+authCard.style.display="none";
+appDiv.style.display="block";
+set(ref(db,"users/"+user.uid),{email:user.email,online:true});
+updateFriends();
+updateStories();
+updatePosts();
 }
 
-// ======================
-// Friends & Stories
-// ======================
-const friendsBox = document.getElementById("friends-box");
-function loadFriends(){
-  onValue(ref(db,"users"), (snapshot)=>{
-    friendsBox.innerHTML = "<h4>חברים אונליין</h4>";
-    snapshot.forEach((child)=>{
-      const u = child.val();
-      if(u.email!==auth.currentUser.email){
-        const div = document.createElement("div");
-        div.className = "friend";
-        div.innerHTML = `<div class="avatar">${u.email[0].toUpperCase()}</div>${u.email}<div class="status-dot"></div>`;
-        friendsBox.appendChild(div);
-      }
-    });
-  });
-}
+// Chat
+sendBtn.onclick=()=>{
+if(chatInput.value.trim()==="") return;
+const user=auth.currentUser;
+push(ref(db,"chat"),{
+text:chatInput.value,
+sender:user.email,
+avatar:user.email[0].toUpperCase(),
+time:new Date().toLocaleTimeString()
+});
+chatInput.value="";
+};
 
-// ======================
-// Admin load all users
-// ======================
-function loadAllUsers(){
-  const adminBox = document.getElementById("admin-users-box");
-  onValue(ref(db,"users"), (snapshot)=>{
-    adminBox.innerHTML = "<h4>כל המשתמשים</h4>";
-    snapshot.forEach((child)=>{
-      const u = child.val();
-      const div = document.createElement("div");
-      div.textContent = u.email;
-      adminBox.appendChild(div);
-    });
-  });
-}
-
-// ======================
-// Auth state change
-// ======================
-onAuthStateChanged(auth, (user)=>{
-  if(user){
-    showUser(user);
-  }
+onChildAdded(ref(db,"chat"),data=>{
+const msg=data.val();
+const div=document.createElement("div");
+div.className="message";
+div.innerHTML=`<div class="avatar">${msg.avatar}</div><div><b>${msg.sender}</b>: ${msg.text}</div>`;
+chatBox.appendChild(div);
+chatBox.scrollTop=chatBox.scrollHeight;
 });
 
-document.getElementById("logout-btn").onclick = () => {
-  signOut(auth).then(()=>location.reload());
-};
+// Friends
+function updateFriends(){
+onValue(ref(db,"users"),snapshot=>{
+friendsDiv.innerHTML="";
+snapshot.forEach(snap=>{
+const user=snap.val();
+const div=document.createElement("div");
+div.className="friend-item";
+div.innerHTML=`<span>${user.email}</span>${user.online?'<span class="online-dot"></span>':''}`;
+friendsDiv.appendChild(div);
+});
+});
+}
+
+// Stories
+function updateStories(){
+storiesDiv.innerHTML="";
+for(let i=0;i<10;i++){
+const s=document.createElement("div");
+s.className="story";
+s.textContent="U"+(i+1);
+storiesDiv.appendChild(s);
+}
+}
+
+// Posts
+function updatePosts(){
+postsDiv.innerHTML="";
+for(let i=0;i<5;i++){
+const p=document.createElement("div");
+p.className="post";
+p.innerHTML=`<b>User${i+1}</b><p>תוכן פוסט לדוגמה ${i+1}</p>`;
+postsDiv.appendChild(p);
+}
+}
+
+// Bots Simulation
+const botNames=["Alice","Bob","Charlie","Dana","Eli","Fay","George","Hannah","Ian","Jack","Kira","Liam","Mona","Nina","Oscar","Paul","Quinn"];
+const botMessages=["שלום לכולם!","איך הולך?","מישהו כאן?","איזה יום יפה היום","מעניין...","מה חדש?","חחח","ממש מגניב!","אני מסכים","מה דעתכם?","lol","זה מצחיק","וואו","נחמד","מה שלומך?","נראה טוב","בהחלט"];
+
+function botActivity(botName){
+setInterval(()=>{
+const text=botMessages[Math.floor(Math.random()*botMessages.length)];
+const msg={text,sender:botName,avatar:botName[0].toUpperCase(),time:new Date().toLocaleTimeString()};
+push(ref(db,"chat"),msg);
+set(ref(db,"users/bot_"+botName),{email:botName,online:true});
+updateFriends();
+},Math.random()*8000+4000);
+}
+
+botNames.forEach(botActivity);
+
+// Monitor Auth State
+onAuthStateChanged(auth,user=>{
+if(user){initUser(user);}
+});
 </script>
 </body>
 </html>
