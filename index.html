@@ -4,100 +4,226 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HUMAN FREE LIGHT - HFL</title>
-<link rel="stylesheet" href="style.css">
 
-<!-- Firebase SDKs -->
-<script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
-<script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
-<script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
-<script type="module" src="script.js"></script>
+<!-- 🔹 CSS פנימי -->
+<style>
+    /* בסיסי Sus Professional style */
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #0D1B2A, #1B263B);
+        color: #E0E1DD;
+    }
+    header {
+        background: #1B263B;
+        padding: 15px;
+        text-align: center;
+        font-size: 2em;
+        font-weight: bold;
+        color: #F0A500;
+    }
+    nav {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        padding: 10px;
+        background: #162447;
+    }
+    nav a {
+        color: #E0E1DD;
+        text-decoration: none;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    nav a:hover {
+        color: #F0A500;
+    }
+    main {
+        padding: 20px;
+        max-width: 1200px;
+        margin: auto;
+    }
+    .section {
+        margin-bottom: 50px;
+        padding: 20px;
+        border-radius: 10px;
+        background: rgba(27, 38, 59, 0.85);
+        box-shadow: 0 0 20px #0F4C75;
+    }
+    button {
+        background: #F0A500;
+        color: #0D1B2A;
+        border: none;
+        padding: 10px 20px;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: 0.3s;
+    }
+    button:hover {
+        background: #FFC857;
+    }
+    input, textarea {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0 15px 0;
+        border-radius: 5px;
+        border: none;
+    }
+    .success {
+        color: #00FF7F;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+    .member-count {
+        font-size: 1.5em;
+        color: #00FF7F;
+        margin-top: 10px;
+        font-weight: bold;
+    }
+    .chat-box, .chat-message {
+        border: 1px solid #0F4C75;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        background: rgba(27,38,59,0.7);
+    }
+    .chat-message span {
+        font-weight: bold;
+    }
+</style>
 </head>
-<body>
 
-<header>
-  <h1>HUMAN FREE LIGHT - HFL</h1>
-  <nav>
-    <button class="nav-btn" data-target="home">בית 🏠</button>
-    <button class="nav-btn" data-target="about">אודות ℹ️</button>
-    <button class="nav-btn" data-target="contact">צור קשר ✉️</button>
-    <button class="nav-btn" data-target="login">התחבר 🔑</button>
-    <button class="nav-btn" data-target="chat">צ’אט 💬</button>
-    <button class="nav-btn" data-target="code">חקיקת קוד 📜</button>
-    <button class="nav-btn" data-target="hierarchy">מבנה שליטה 🏰</button>
-  </nav>
-</header>
+<body>
+<header>HUMAN FREE LIGHT - HFL</header>
+
+<nav>
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+    <a href="#contact">Join</a>
+    <a href="#login">Login</a>
+    <a href="#chat">Chat</a>
+</nav>
 
 <main>
-  <section id="home" class="page active">
-    <h2>ברוכים הבאים ל-HFL 🌌</h2>
-    <p>אנחנו קבוצה חופשית לשחרור האדם ויצירת אלטרנטיבה לממסד.</p>
-    <div class="member-counter">
-      חברים בארגון: <span id="member-count">0</span> ✨
-    </div>
-  </section>
+    <!-- 🔹 Home Section -->
+    <section id="home" class="section">
+        <h2>Welcome to HFL 🌟</h2>
+        <p>Our organization empowers human freedom and builds an alternative civic government. Join us and become part of a group working for liberation and autonomy. ✨</p>
+        <div class="member-count">Total Members: <span id="totalMembers">0</span></div>
+    </section>
 
-  <section id="about" class="page">
-    <h2>מי אנחנו 🕊️</h2>
-    <p>
-      HFL היא קבוצה אזרחית לשחרור האדם, יצירת אלטרנטיבה לממסד, והקמת מערכת חופשית שתפרק את עצמה לאחר השגת היעדים.
-    </p>
-  </section>
+    <!-- 🔹 About Section -->
+    <section id="about" class="section">
+        <h2>About Us</h2>
+        <p>We are HUMAN FREE LIGHT, an initiative to reclaim freedom for individuals by creating a civic organization that does not interfere with private life. Our goal is to achieve autonomy and establish a structured, yet temporary, alternative system. Once our objectives are achieved, we disband responsibly. 🕊️</p>
+    </section>
 
-  <section id="contact" class="page">
-    <h2>הצטרף לארגון ✨</h2>
-    <form id="contact-form">
-      <input type="text" placeholder="שם מלא" id="contact-name" required>
-      <input type="email" placeholder="אימייל" id="contact-email" required>
-      <button type="submit">שלח בקשה 📤</button>
-      <div id="contact-success" class="success-msg">✨ בקשה נשלחה!</div>
-    </form>
-  </section>
+    <!-- 🔹 Contact / Join Section -->
+    <section id="contact" class="section">
+        <h2>Join HFL</h2>
+        <input type="text" id="joinName" placeholder="Your Name" required>
+        <input type="email" id="joinEmail" placeholder="Your Email" required>
+        <input type="password" id="joinPassword" placeholder="Create Password" required>
+        <small>Password should be 8+ chars, include a number 🔑</small>
+        <button onclick="registerUser()">Submit</button>
+        <div id="joinSuccess" class="success"></div>
+    </section>
 
-  <section id="login" class="page">
-    <h2>התחברות / הרשמה 🔑</h2>
-    <form id="signup-form">
-      <input type="text" placeholder="שם משתמש" id="signup-name" required>
-      <input type="email" placeholder="אימייל" id="signup-email" required>
-      <input type="password" placeholder="סיסמה (8+ תווים, מספר אחד לפחות)" id="signup-password" required>
-      <button type="submit">הירשם 📝</button>
-      <div id="signup-success" class="success-msg">✨ הרשמה בוצעה! ממתינים לאישור מנהל.</div>
-    </form>
+    <!-- 🔹 Login Section -->
+    <section id="login" class="section">
+        <h2>Login</h2>
+        <input type="text" id="loginEmail" placeholder="Email" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <button onclick="loginUser()">Login</button>
+        <div id="loginSuccess" class="success"></div>
+    </section>
 
-    <form id="login-form">
-      <input type="text" placeholder="שם משתמש" id="login-username" required>
-      <input type="password" placeholder="סיסמה" id="login-password" required>
-      <button type="submit">התחבר 🔑</button>
-      <div id="login-success" class="success-msg">✨ התחברת בהצלחה!</div>
-    </form>
-  </section>
-
-  <section id="chat" class="page">
-    <h2>צ’אט חברים 💬</h2>
-    <div id="chat-online">משתמשים אונליין: <span id="online-count">0</span></div>
-    <div id="chat-box"></div>
-    <input type="text" placeholder="שלח הודעה..." id="chat-input">
-    <button id="chat-send">שלח 💌</button>
-  </section>
-
-  <section id="code" class="page">
-    <h2>חקיקת קוד 📜</h2>
-    <p>אם מצטרפים 10 משתמשים – נוצרת קבוצה פנימית לשינוי נהלים וחוקים.</p>
-    <div id="code-members">משתמשים שצירפו: <span id="code-count">0</span></div>
-    <textarea id="code-request" placeholder="מה אתה רוצה לשנות / ליצור?"></textarea>
-    <button id="code-send">שלח בקשה ✨</button>
-    <div id="code-success" class="success-msg">✨ בקשה נשלחה!</div>
-  </section>
-
-  <section id="hierarchy" class="page">
-    <h2>מבנה שליטה 🏰</h2>
-    <div id="hierarchy-tree">
-      <div>מנהל 🥇</div>
-      <div>מפקדים (5) 🛡️</div>
-      <div>סגן פיקוד (10) ⚔️</div>
-      <div>סוכנים 🕵️</div>
-    </div>
-  </section>
+    <!-- 🔹 Chat Section -->
+    <section id="chat" class="section">
+        <h2>Live Chat 🗨️</h2>
+        <div id="chatBox" class="chat-box"></div>
+        <input type="text" id="chatInput" placeholder="Type message..." onkeypress="if(event.key==='Enter'){sendMessage();}">
+        <button onclick="sendMessage()">Send</button>
+    </section>
 </main>
 
+<!-- 🔹 Firebase SDK + JS -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+// 🔹 Firebase Config
+const firebaseConfig = {
+    apiKey: "<YOUR_FIREBASE_API_KEY>",
+    authDomain: "<YOUR_FIREBASE_AUTH_DOMAIN>",
+    databaseURL: "<YOUR_FIREBASE_DB_URL>",
+    projectId: "<YOUR_FIREBASE_PROJECT_ID>",
+    storageBucket: "<YOUR_FIREBASE_STORAGE_BUCKET>",
+    messagingSenderId: "<YOUR_FIREBASE_MSG_SENDER_ID>",
+    appId: "<YOUR_FIREBASE_APP_ID>"
+};
+firebase.initializeApp(firebaseConfig);
+
+// 🔹 References
+const auth = firebase.auth();
+const db = firebase.database();
+
+// 🔹 Member Count
+const totalMembersElem = document.getElementById('totalMembers');
+db.ref('members').on('value', snapshot => {
+    totalMembersElem.textContent = snapshot.numChildren();
+});
+
+// 🔹 Register User
+function registerUser(){
+    const name = document.getElementById('joinName').value;
+    const email = document.getElementById('joinEmail').value;
+    const password = document.getElementById('joinPassword').value;
+    if(password.length<8 || !/\d/.test(password)){
+        alert('Password must be 8+ chars and include a number');
+        return;
+    }
+    auth.createUserWithEmailAndPassword(email,password)
+        .then(userCredential => {
+            const uid = userCredential.user.uid;
+            db.ref('members/'+uid).set({name,email,role:'agent'});
+            document.getElementById('joinSuccess').textContent = '✅ Registered successfully!';
+        })
+        .catch(error => alert(error.message));
+}
+
+// 🔹 Login User
+function loginUser(){
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    auth.signInWithEmailAndPassword(email,password)
+        .then(userCredential => {
+            document.getElementById('loginSuccess').textContent = '✅ Logged in!';
+        })
+        .catch(error => alert(error.message));
+}
+
+// 🔹 Chat functionality
+const chatBox = document.getElementById('chatBox');
+function sendMessage(){
+    const msg = document.getElementById('chatInput').value;
+    const user = auth.currentUser;
+    if(!user || !msg) return;
+    db.ref('chat').push({uid:user.uid,email:user.email,message:msg});
+    document.getElementById('chatInput').value='';
+}
+
+// Listen for chat updates
+db.ref('chat').on('child_added', snapshot=>{
+    const data = snapshot.val();
+    const div = document.createElement('div');
+    div.className = 'chat-message';
+    div.innerHTML = `<span>${data.email}:</span> ${data.message}`;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+});
+</script>
 </body>
 </html>
