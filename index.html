@@ -3,214 +3,215 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HFL Chat - SUS Modern</title>
-
-<!-- Fonts & Icons -->
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
-
-<style>
-/* =======================
-   SUS Modern WhatsApp-like
-======================= */
-body {
-  font-family:'Orbitron', sans-serif;
-  background: linear-gradient(135deg,#0D1B2A,#1B263B);
-  color:#E0E1DD;
-  margin:0;
-  padding:0;
-}
-header {
-  background:#1B263B;
-  text-align:center;
-  padding:20px;
-  font-size:2em;
-  color:#F0A500;
-  text-shadow:0 0 10px #FFC857;
-}
-nav {
-  display:flex;
-  justify-content:center;
-  gap:15px;
-  padding:10px;
-  background:#162447;
-  box-shadow:0 4px 20px rgba(0,0,0,0.5);
-}
-nav a {
-  color:#E0E1DD;
-  text-decoration:none;
-  font-weight:bold;
-  transition:0.3s;
-}
-nav a:hover { color:#F0A500; transform:scale(1.1); }
-
-main { max-width:900px; margin:auto; padding:15px; }
-
-.section {
-  background: rgba(27,38,59,0.95);
-  padding:20px;
-  border-radius:12px;
-  margin-bottom:25px;
-  box-shadow:0 0 20px #0F4C75;
-}
-
-/* Forms */
-input,textarea { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:none; }
-button {
-  background:#F0A500; color:#0D1B2A; border:none;
-  padding:10px 20px; border-radius:8px; font-weight:bold;
-  cursor:pointer; transition:0.3s; box-shadow:0 0 10px #FFC857;
-}
-button:hover { background:#FFC857; transform:scale(1.05); }
-
-/* Chat */
-.chat-container { display:flex; flex-direction:column; max-height:400px; overflow-y:auto; }
-.chat-message { padding:8px 12px; border-radius:12px; margin:5px 0; max-width:75%; animation:fadeIn 0.5s; }
-.chat-message.me { background:#00FF7F; color:#0D1B2A; align-self:flex-end; }
-.chat-message.other { background:#1B263B; border:1px solid #0F4C75; color:#E0E1DD; align-self:flex-start; }
-.online-dot { display:inline-block; width:10px; height:10px; border-radius:50%; background:#00FF7F; margin-right:5px; animation:pulse 1.5s infinite; }
-
-@keyframes pulse { 0%{transform:scale(0.9);opacity:0.7;}50%{transform:scale(1.2);opacity:1;}100%{transform:scale(0.9);opacity:0.7;} }
-@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
-.success { color:#00FF7F; font-weight:bold; margin-top:10px; animation:pop 0.5s ease-in-out; }
-@keyframes pop { 0%{transform:scale(0);opacity:0;} 100%{transform:scale(1);opacity:1;} }
-
-.user-card { display:flex; justify-content:space-between; padding:8px; margin:5px 0; border-radius:8px; background: rgba(27,38,59,0.7); align-items:center; animation:fadeIn 0.5s; }
-.user-actions button { margin-left:5px; font-size:0.9em; }
-</style>
-</head>
-
-<body>
-<header>HFL Chat System 🔥</header>
-<nav>
-  <a href="#register">Register</a>
-  <a href="#login">Login</a>
-  <a href="#chat">Chat</a>
-</nav>
-
-<main>
-<!-- Register -->
-<section id="register" class="section">
-<h2>Register ✨</h2>
-<input type="text" id="regName" placeholder="Full Name">
-<input type="email" id="regEmail" placeholder="Email">
-<input type="password" id="regPass" placeholder="Password (8+ chars, number)">
-<button onclick="register()">Register</button>
-<div id="regSuccess" class="success"></div>
-</section>
-
-<!-- Login -->
-<section id="login" class="section">
-<h2>Login 🔑</h2>
-<input type="email" id="logEmail" placeholder="Email">
-<input type="password" id="logPass" placeholder="Password">
-<button onclick="login()">Login</button>
-<div id="logSuccess" class="success"></div>
-</section>
-
-<!-- Chat -->
-<section id="chat" class="section">
-<h2>Live Chat 🗨️</h2>
-<div id="chatBox" class="chat-container"></div>
-<input type="text" id="chatInput" placeholder="Type message..." onkeypress="if(event.key==='Enter'){sendMsg();}">
-<button onclick="sendMsg()">Send</button>
-
-<h3>Online Users</h3>
-<div id="onlineList"></div>
-</section>
-
-<!-- ===================
-     Firebase
-=================== -->
+<title>HFL SUS Platform</title>
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+  body { font-family:'Segoe UI', sans-serif; margin:0; background:#0d1117; color:#c9d1d9; }
+  header { display:flex; justify-content:space-between; padding:10px 20px; background:#161b22; align-items:center; }
+  nav a { margin:0 10px; text-decoration:none; color:#58a6ff; font-weight:bold; transition:0.3s; }
+  nav a:hover { color:#1f6feb; }
+  .container { padding:20px; }
+  .tab { display:none; }
+  .tab.active { display:block; animation:fadeIn 0.5s; }
+  @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+  button { background:#238636; color:white; border:none; padding:8px 14px; margin:5px; cursor:pointer; border-radius:5px; transition:0.3s; }
+  button:hover { background:#2ea043; }
+  input, textarea { padding:8px; margin:5px 0; border-radius:4px; border:1px solid #30363d; background:#0d1117; color:#c9d1d9; width:100%; }
+  .success { color:#39d353; font-weight:bold; animation:pulse 0.5s; }
+  @keyframes pulse { 0%{transform:scale(0.95);} 50%{transform:scale(1.05);} 100%{transform:scale(1);} }
+  .chat { border:1px solid #30363d; padding:10px; border-radius:5px; height:300px; overflow-y:auto; background:#161b22; }
+  .message { margin:5px 0; }
+  .online-dot { width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:5px; }
+  .blue { background:#58a6ff; }
+  .green { background:#39d353; }
+  .card { border:1px solid #30363d; border-radius:5px; padding:10px; margin:5px; background:#161b22; }
+</style>
+</head>
+<body>
+
+<header>
+  <div><strong>HFL SUS Platform</strong></div>
+  <nav>
+    <a href="#" onclick="openTab('register')">Register</a>
+    <a href="#" onclick="openTab('login')">Login</a>
+    <a href="#" onclick="openTab('profile')">Profile</a>
+    <a href="#" onclick="openTab('publicChat')">Public Chat</a>
+    <a href="#" onclick="openTab('privateChat')">Private Chat</a>
+    <a href="#" onclick="openTab('alliances')">Alliances</a>
+    <a href="#" onclick="openTab('code')">Code Legislation</a>
+  </nav>
+</header>
+
+<div class="container">
+  <!-- Register -->
+  <div id="register" class="tab">
+    <h2>Register</h2>
+    <input type="email" id="regEmail" placeholder="Email">
+    <input type="password" id="regPassword" placeholder="Password">
+    <button onclick="register()">Sign Up</button>
+    <div id="regMsg"></div>
+  </div>
+
+  <!-- Login -->
+  <div id="login" class="tab">
+    <h2>Login</h2>
+    <input type="email" id="logEmail" placeholder="Email">
+    <input type="password" id="logPassword" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <div id="logMsg"></div>
+  </div>
+
+  <!-- Profile -->
+  <div id="profile" class="tab">
+    <h2>Profile</h2>
+    <div id="userInfo"></div>
+  </div>
+
+  <!-- Public Chat -->
+  <div id="publicChat" class="tab">
+    <h2>Public Chat</h2>
+    <div class="chat" id="publicChatBox"></div>
+    <input type="text" id="publicMsg" placeholder="Type message...">
+    <button onclick="sendPublic()">Send</button>
+  </div>
+
+  <!-- Private Chat -->
+  <div id="privateChat" class="tab">
+    <h2>Private Chat</h2>
+    <div class="chat" id="privateChatBox"></div>
+    <input type="text" id="privateMsg" placeholder="Type private message...">
+    <button onclick="sendPrivate()">Send</button>
+  </div>
+
+  <!-- Alliances -->
+  <div id="alliances" class="tab">
+    <h2>Alliances</h2>
+    <div id="alliancesList"></div>
+  </div>
+
+  <!-- Code Legislation -->
+  <div id="code" class="tab">
+    <h2>Code Legislation</h2>
+    <div id="codeProposals"></div>
+    <textarea id="proposalInput" placeholder="Your suggestion..."></textarea>
+    <button onclick="sendProposal()">Submit</button>
+  </div>
+</div>
 
 <script>
-// Firebase Config
-const firebaseConfig = {
-  apiKey:"<YOUR_FIREBASE_API_KEY>",
-  authDomain:"<YOUR_FIREBASE_AUTH_DOMAIN>",
-  databaseURL:"<YOUR_FIREBASE_DB_URL>",
-  projectId:"<YOUR_FIREBASE_PROJECT_ID>",
-  storageBucket:"<YOUR_FIREBASE_STORAGE_BUCKET>",
-  messagingSenderId:"<YOUR_FIREBASE_MSG_SENDER_ID>",
-  appId:"<YOUR_FIREBASE_APP_ID>"
-};
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.database();
+  // Firebase Config
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    databaseURL: "YOUR_DB_URL",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MSG_ID",
+    appId: "YOUR_APP_ID"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database();
 
-// ===================
-// Register
-// ===================
-function register(){
-  const name=document.getElementById('regName').value;
-  const email=document.getElementById('regEmail').value;
-  const pass=document.getElementById('regPass').value;
-  if(pass.length<8||!/\d/.test(pass)){ alert('Password must be 8+ chars & include number'); return; }
-  auth.createUserWithEmailAndPassword(email,pass)
-  .then(u=>{
-    db.ref('users/'+u.user.uid).set({name,email});
-    document.getElementById('regSuccess').textContent='✅ Registered! Check your email for verification';
-    u.user.sendEmailVerification();
-  })
-  .catch(err=>alert(err.message));
-}
+  // Tabs
+  function openTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(tab).classList.add('active');
+  }
 
-// ===================
-// Login
-// ===================
-function login(){
-  const email=document.getElementById('logEmail').value;
-  const pass=document.getElementById('logPass').value;
-  auth.signInWithEmailAndPassword(email,pass)
-  .then(u=>{
-    if(!u.user.emailVerified){ alert('Please verify email first'); return; }
-    document.getElementById('logSuccess').textContent='✅ Logged in!';
-    loadChat();
-    loadOnlineUsers();
-  })
-  .catch(err=>alert(err.message));
-}
+  // Register
+  function register() {
+    const email = document.getElementById('regEmail').value;
+    const password = document.getElementById('regPassword').value;
+    auth.createUserWithEmailAndPassword(email, password)
+      .then(res => { document.getElementById('regMsg').innerHTML='<span class="success">Registered!</span>'; })
+      .catch(err => { document.getElementById('regMsg').textContent = err.message; });
+  }
 
-// ===================
-// Chat
-// ===================
-const chatBox=document.getElementById('chatBox');
-function sendMsg(){
-  const msg=document.getElementById('chatInput').value;
-  const user=auth.currentUser;
-  if(!user||!msg) return;
-  db.ref('chat').push({uid:user.uid,name:user.displayName||user.email,message:msg});
-  document.getElementById('chatInput').value='';
-}
-function loadChat(){
-  db.ref('chat').on('child_added',snap=>{
-    const d=snap.val();
-    const div=document.createElement('div');
-    div.className=d.uid===auth.currentUser.uid?'chat-message me':'chat-message other';
-    div.innerHTML=`<strong>${d.name}:</strong> ${d.message}`;
-    chatBox.appendChild(div);
-    chatBox.scrollTop=chatBox.scrollHeight;
+  // Login
+  function login() {
+    const email = document.getElementById('logEmail').value;
+    const password = document.getElementById('logPassword').value;
+    auth.signInWithEmailAndPassword(email, password)
+      .then(res => { document.getElementById('logMsg').innerHTML='<span class="success">Logged in!</span>'; loadProfile(); loadPrivateChat(); })
+      .catch(err => { document.getElementById('logMsg').textContent = err.message; });
+  }
+
+  // Load Profile
+  function loadProfile() {
+    const user = auth.currentUser;
+    if(user){ document.getElementById('userInfo').innerHTML = 'Email: '+user.email; }
+  }
+
+  // Public Chat
+  const chatRef = db.ref('publicChat');
+  chatRef.on('child_added', snapshot => {
+    const msg = snapshot.val();
+    const msgDiv = document.createElement('div');
+    msgDiv.classList.add('message');
+    msgDiv.textContent = msg.email + ': ' + msg.text;
+    document.getElementById('publicChatBox').appendChild(msgDiv);
+    document.getElementById('publicChatBox').scrollTop = document.getElementById('publicChatBox').scrollHeight;
   });
-}
+  function sendPublic() {
+    const user = auth.currentUser;
+    const text = document.getElementById('publicMsg').value;
+    if(user && text){
+      chatRef.push({ email:user.email, text:text });
+      document.getElementById('publicMsg').value='';
+    }
+  }
 
-// ===================
-// Online Users
-// ===================
-function loadOnlineUsers(){
-  const list=document.getElementById('onlineList');
-  db.ref('users').on('value',snap=>{
-    list.innerHTML='';
-    snap.forEach(child=>{
-      const u=child.val();
-      const div=document.createElement('div');
-      div.className='user-card';
-      div.innerHTML=`<span class="online-dot"></span>${u.name}`;
-      list.appendChild(div);
-    });
+  // Private Chat
+  const privateRef = db.ref('privateChat');
+  privateRef.on('child_added', snap => {
+    const msg = snap.val();
+    const div = document.createElement('div');
+    div.textContent = msg.email + ': ' + msg.text;
+    document.getElementById('privateChatBox').appendChild(div);
+    document.getElementById('privateChatBox').scrollTop = document.getElementById('privateChatBox').scrollHeight;
   });
-}
+  function sendPrivate() {
+    const user = auth.currentUser;
+    const text = document.getElementById('privateMsg').value;
+    if(user && text){
+      privateRef.push({ email:user.email, text:text });
+      document.getElementById('privateMsg').value='';
+    }
+  }
+
+  // Alliances (SUS placeholder)
+  const allianceRef = db.ref('alliances');
+  allianceRef.on('child_added', snap => {
+    const data = snap.val();
+    const div = document.createElement('div');
+    div.classList.add('card');
+    div.textContent = data.email + ' formed alliance with ' + data.with;
+    document.getElementById('alliancesList').appendChild(div);
+  });
+
+  // Code Legislation
+  const codeRef = db.ref('codeProposals');
+  codeRef.on('child_added', snap => {
+    const data = snap.val();
+    const div = document.createElement('div');
+    div.classList.add('card');
+    div.textContent = data.email + ': ' + data.text;
+    document.getElementById('codeProposals').appendChild(div);
+  });
+  function sendProposal(){
+    const user = auth.currentUser;
+    const text = document.getElementById('proposalInput').value;
+    if(user && text){
+      codeRef.push({ email:user.email, text:text });
+      document.getElementById('proposalInput').value='';
+    }
+  }
+
+  openTab('register');
 </script>
 </body>
 </html>
