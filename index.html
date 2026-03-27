@@ -3,32 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HUMAN FREE LIGHT - HFL</title>
+<title>HUMAN FREE LIGHT - SUS Modern</title>
 
 <style>
 /* =======================
-   SUS Professional Style
+   SUS Modern Styling
 ======================= */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+* { box-sizing:border-box; margin:0; padding:0; }
 body {
-  margin:0;
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family:'Orbitron', sans-serif;
   background: linear-gradient(135deg,#0D1B2A,#1B263B);
   color:#E0E1DD;
 }
 header {
   background:#1B263B;
-  padding:15px;
+  padding:20px;
   text-align:center;
-  font-size:2em;
+  font-size:2.2em;
   font-weight:bold;
   color:#F0A500;
+  text-shadow:0 0 10px #FFC857;
 }
 nav {
   display:flex;
   justify-content:center;
   gap:20px;
-  padding:10px;
+  padding:15px;
   background:#162447;
+  box-shadow:0 4px 20px rgba(0,0,0,0.5);
 }
 nav a {
   color:#E0E1DD;
@@ -36,66 +40,94 @@ nav a {
   font-weight:bold;
   transition:0.3s;
 }
-nav a:hover { color:#F0A500; }
+nav a:hover {
+  color:#F0A500;
+  transform:scale(1.1);
+}
 main { padding:20px; max-width:1200px; margin:auto; }
 .section {
   margin-bottom:50px;
-  padding:20px;
-  border-radius:10px;
-  background:rgba(27,38,59,0.85);
-  box-shadow:0 0 20px #0F4C75;
+  padding:25px;
+  border-radius:15px;
+  background:rgba(27,38,59,0.9);
+  box-shadow:0 0 30px #0F4C75;
+  animation: fadeIn 1s ease-in;
 }
 button {
   background:#F0A500;
   color:#0D1B2A;
   border:none;
-  padding:10px 20px;
+  padding:12px 25px;
   font-weight:bold;
   cursor:pointer;
-  border-radius:5px;
+  border-radius:8px;
   transition:0.3s;
+  box-shadow:0 0 10px #FFC857;
 }
-button:hover { background:#FFC857; }
+button:hover {
+  background:#FFC857;
+  transform:scale(1.05);
+}
 input,textarea {
   width:100%;
-  padding:10px;
-  margin:5px 0 15px 0;
-  border-radius:5px;
+  padding:12px;
+  margin:8px 0 18px 0;
+  border-radius:8px;
   border:none;
 }
-.success { color:#00FF7F; font-weight:bold; margin:10px 0; }
-.member-count { font-size:1.5em; color:#00FF7F; margin-top:10px; font-weight:bold; }
+.success {
+  color:#00FF7F;
+  font-weight:bold;
+  margin:10px 0;
+  animation: pop 0.5s ease-in-out;
+}
+.member-count {
+  font-size:1.6em;
+  color:#00FF7F;
+  margin-top:15px;
+  font-weight:bold;
+  animation: glow 2s infinite alternate;
+}
 .chat-box,.chat-message {
   border:1px solid #0F4C75;
-  padding:10px;
-  border-radius:5px;
-  margin-bottom:10px;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:12px;
   background: rgba(27,38,59,0.7);
+  animation: fadeIn 0.5s ease-in;
 }
-.chat-message span { font-weight:bold; }
+.chat-message span { font-weight:bold; color:#FFC857; }
 .online-dot {
   display:inline-block;
-  width:10px; height:10px;
+  width:12px; height:12px;
   border-radius:50%;
   background:#00FF7F;
-  margin-right:5px;
+  margin-right:8px;
+  animation: pulse 1.5s infinite;
 }
 .user-card {
   border:1px solid #0F4C75;
-  padding:10px;
-  margin:5px 0;
-  border-radius:5px;
+  padding:12px;
+  margin:8px 0;
+  border-radius:8px;
   background:rgba(27,38,59,0.6);
   display:flex;
   justify-content:space-between;
   align-items:center;
+  animation: fadeIn 0.5s ease-in;
 }
-.user-actions button { margin-left:5px; }
+.user-actions button { margin-left:6px; font-size:0.9em; }
+
+/* Animations */
+@keyframes pulse { 0% { transform:scale(0.9); opacity:0.7; } 50% { transform:scale(1.2); opacity:1; } 100% { transform:scale(0.9); opacity:0.7; } }
+@keyframes glow { 0% { text-shadow:0 0 5px #00FF7F; } 100% { text-shadow:0 0 20px #00FF7F; } }
+@keyframes pop { 0% { transform:scale(0); opacity:0; } 100% { transform:scale(1); opacity:1; } }
+@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
 </style>
 </head>
 
 <body>
-<header>HUMAN FREE LIGHT - HFL</header>
+<header>HUMAN FREE LIGHT - SUS Modern</header>
 <nav>
     <a href="#home">Home</a>
     <a href="#about">About</a>
@@ -107,50 +139,40 @@ input,textarea {
 </nav>
 
 <main>
-<!-- ===================
-     Home Section
-=================== -->
+<!-- Home -->
 <section id="home" class="section">
 <h2>Welcome to HFL 🌟</h2>
 <p>Empowering human freedom, building an alternative civic organization, and preparing members for autonomous action. ✨</p>
 <div class="member-count">Total Members: <span id="totalMembers">0</span></div>
 </section>
 
-<!-- ===================
-     About Section
-=================== -->
+<!-- About -->
 <section id="about" class="section">
 <h2>About Us</h2>
-<p>HUMAN FREE LIGHT is a civic organization promoting individual freedom. We build temporary structures to empower members and will disband after achieving our objectives. 🕊️</p>
+<p>HUMAN FREE LIGHT is a civic organization promoting individual freedom. We build temporary structures to empower members and disband after achieving objectives. 🕊️</p>
 </section>
 
-<!-- ===================
-     Join Section
-=================== -->
+<!-- Join -->
 <section id="join" class="section">
 <h2>Join HFL</h2>
-<input type="text" id="joinName" placeholder="Your Name" required>
-<input type="email" id="joinEmail" placeholder="Your Email" required>
-<input type="password" id="joinPassword" placeholder="Create Password" required>
+<input type="text" id="joinName" placeholder="Your Name">
+<input type="email" id="joinEmail" placeholder="Your Email">
+<input type="password" id="joinPassword" placeholder="Create Password">
 <small>Password: 8+ chars, include a number 🔑</small>
 <button onclick="registerUser()">Submit</button>
 <div id="joinSuccess" class="success"></div>
 </section>
 
-<!-- ===================
-     Login Section
-=================== -->
+<!-- Login -->
 <section id="login" class="section">
 <h2>Login</h2>
-<input type="email" id="loginEmail" placeholder="Email" required>
-<input type="password" id="loginPassword" placeholder="Password" required>
+<input type="email" id="loginEmail" placeholder="Email">
+<input type="password" id="loginPassword" placeholder="Password">
 <button onclick="loginUser()">Login</button>
 <div id="loginSuccess" class="success"></div>
 </section>
 
-<!-- ===================
-     Chat Section
-=================== -->
+<!-- Chat -->
 <section id="chat" class="section">
 <h2>Live Chat 🗨️</h2>
 <div id="chatBox" class="chat-box"></div>
@@ -161,17 +183,13 @@ input,textarea {
 <div id="onlineMembers"></div>
 </section>
 
-<!-- ===================
-     Hierarchy Section
-=================== -->
+<!-- Hierarchy -->
 <section id="hierarchy" class="section">
 <h2>Organization Hierarchy 📊</h2>
 <div id="hierarchyContainer"></div>
 </section>
 
-<!-- ===================
-     Legislation Section
-=================== -->
+<!-- Legislation -->
 <section id="legislation" class="section">
 <h2>Legislation / Code of Conduct 📝</h2>
 <div id="legislationContainer"></div>
@@ -185,7 +203,7 @@ input,textarea {
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <script>
-// 🔹 Firebase Config - Replace with your project details
+// 🔹 Firebase Config
 const firebaseConfig = {
   apiKey: "<YOUR_FIREBASE_API_KEY>",
   authDomain: "<YOUR_FIREBASE_AUTH_DOMAIN>",
@@ -196,7 +214,6 @@ const firebaseConfig = {
   appId: "<YOUR_FIREBASE_APP_ID>"
 };
 firebase.initializeApp(firebaseConfig);
-
 const auth = firebase.auth();
 const db = firebase.database();
 
@@ -215,10 +232,7 @@ function registerUser(){
   const name = document.getElementById('joinName').value;
   const email = document.getElementById('joinEmail').value;
   const password = document.getElementById('joinPassword').value;
-  if(password.length<8 || !/\d/.test(password)){
-    alert('Password must be 8+ chars and include a number');
-    return;
-  }
+  if(password.length<8 || !/\d/.test(password)){ alert('Password must be 8+ chars and include a number'); return; }
   auth.createUserWithEmailAndPassword(email,password)
     .then(userCredential=>{
       const uid = userCredential.user.uid;
@@ -245,7 +259,7 @@ function loginUser(){
 }
 
 // ===================
-// Chat Functionality
+// Chat
 // ===================
 const chatBox = document.getElementById('chatBox');
 function sendMessage(){
@@ -255,7 +269,6 @@ function sendMessage(){
   db.ref('chat').push({uid:user.uid,email:user.email,message:msg});
   document.getElementById('chatInput').value='';
 }
-
 db.ref('chat').on('child_added', snapshot=>{
   const data = snapshot.val();
   const div = document.createElement('div');
@@ -266,7 +279,7 @@ db.ref('chat').on('child_added', snapshot=>{
 });
 
 // ===================
-// Online Members & Actions (Create Alliance, Report)
+// Online Members
 // ===================
 function loadOnlineMembers(){
   const container = document.getElementById('onlineMembers');
@@ -303,7 +316,7 @@ function reportUser(uid,name){
 }
 
 // ===================
-// Hierarchy Section
+// Hierarchy
 // ===================
 function loadHierarchy(){
   const container = document.getElementById('hierarchyContainer');
@@ -311,7 +324,6 @@ function loadHierarchy(){
   db.ref('members').on('value', snapshot=>{
     const members = snapshot.val();
     container.innerHTML='';
-    // Simple Hierarchy Example
     for(let role of ['admin','commander','deputy','agent']){
       const roleDiv = document.createElement('div');
       roleDiv.innerHTML=`<h4>${role.toUpperCase()}</h4>`;
@@ -324,7 +336,7 @@ function loadHierarchy(){
 }
 
 // ===================
-// Legislation / Code of Conduct
+// Legislation
 // ===================
 function loadLegislation(){
   const container = document.getElementById('legislationContainer');
