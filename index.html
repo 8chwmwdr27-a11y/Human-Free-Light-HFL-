@@ -4,214 +4,184 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HFL SUS Platform</title>
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<!-- SUS Styles -->
 <style>
-  body { font-family:'Segoe UI', sans-serif; margin:0; background:#0d1117; color:#c9d1d9; }
-  header { display:flex; justify-content:space-between; padding:10px 20px; background:#161b22; align-items:center; }
-  nav a { margin:0 10px; text-decoration:none; color:#58a6ff; font-weight:bold; transition:0.3s; }
-  nav a:hover { color:#1f6feb; }
-  .container { padding:20px; }
-  .tab { display:none; }
-  .tab.active { display:block; animation:fadeIn 0.5s; }
-  @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
-  button { background:#238636; color:white; border:none; padding:8px 14px; margin:5px; cursor:pointer; border-radius:5px; transition:0.3s; }
-  button:hover { background:#2ea043; }
-  input, textarea { padding:8px; margin:5px 0; border-radius:4px; border:1px solid #30363d; background:#0d1117; color:#c9d1d9; width:100%; }
-  .success { color:#39d353; font-weight:bold; animation:pulse 0.5s; }
-  @keyframes pulse { 0%{transform:scale(0.95);} 50%{transform:scale(1.05);} 100%{transform:scale(1);} }
-  .chat { border:1px solid #30363d; padding:10px; border-radius:5px; height:300px; overflow-y:auto; background:#161b22; }
-  .message { margin:5px 0; }
-  .online-dot { width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:5px; }
-  .blue { background:#58a6ff; }
-  .green { background:#39d353; }
-  .card { border:1px solid #30363d; border-radius:5px; padding:10px; margin:5px; background:#161b22; }
+:root {
+  --primary-color: #2b2d42;
+  --secondary-color: #8d99ae;
+  --accent-color: #ef233c;
+  --success-color: #06d6a0;
+  --hover-color: #ffd166;
+  --text-color: #edf2f4;
+}
+body {
+  margin: 0; font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #2b2d42, #8d99ae);
+  color: var(--text-color);
+}
+header {
+  background: var(--primary-color); padding: 1rem;
+  display: flex; justify-content: space-between; align-items: center;
+}
+header h1 { margin: 0; font-size: 1.5rem; color: var(--accent-color);}
+nav a {
+  color: var(--text-color); text-decoration: none; margin-left: 1rem;
+  font-weight: bold; transition: color 0.3s;
+}
+nav a:hover { color: var(--hover-color);}
+.container { padding: 1rem; max-width: 1200px; margin: auto;}
+.tabs { display: flex; gap: 1rem; margin-bottom: 1rem;}
+.tab { padding: 0.5rem 1rem; background: var(--secondary-color); cursor: pointer; border-radius:5px; transition: all 0.3s;}
+.tab.active { background: var(--accent-color);}
+.card { background: var(--primary-color); padding:1rem; border-radius: 10px; margin-bottom: 1rem; box-shadow: 0 4px 8px rgba(0,0,0,0.3);}
+button { padding: 0.5rem 1rem; border: none; border-radius:5px; cursor:pointer; transition: all 0.3s; font-weight: bold;}
+button:hover { transform: scale(1.05);}
+input { padding:0.5rem; border-radius:5px; border:none; margin-bottom:0.5rem; width:100%;}
+.success { color: var(--success-color); animation: pulse 0.8s;}
+@keyframes pulse {
+  0% { transform: scale(1);}
+  50% { transform: scale(1.1);}
+  100% { transform: scale(1);}
+}
+/* Chat SUS */
+.chat { background: var(--secondary-color); padding:1rem; border-radius:10px; max-height:400px; overflow-y:auto;}
+.message { margin-bottom:0.5rem; padding:0.5rem; border-radius:5px; background:#2b2d42;}
+.message.self { background:#06d6a0; color:#000;}
+.online-dot { height:10px; width:10px; border-radius:50%; display:inline-block; margin-right:5px; background:#06d6a0; animation: pulse 1s infinite;}
 </style>
-</head>
-<body>
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+  import { getDatabase, ref, set, push, onValue } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
 
-<header>
-  <div><strong>HFL SUS Platform</strong></div>
-  <nav>
-    <a href="#" onclick="openTab('register')">Register</a>
-    <a href="#" onclick="openTab('login')">Login</a>
-    <a href="#" onclick="openTab('profile')">Profile</a>
-    <a href="#" onclick="openTab('publicChat')">Public Chat</a>
-    <a href="#" onclick="openTab('privateChat')">Private Chat</a>
-    <a href="#" onclick="openTab('alliances')">Alliances</a>
-    <a href="#" onclick="openTab('code')">Code Legislation</a>
-  </nav>
-</header>
-
-<div class="container">
-  <!-- Register -->
-  <div id="register" class="tab">
-    <h2>Register</h2>
-    <input type="email" id="regEmail" placeholder="Email">
-    <input type="password" id="regPassword" placeholder="Password">
-    <button onclick="register()">Sign Up</button>
-    <div id="regMsg"></div>
-  </div>
-
-  <!-- Login -->
-  <div id="login" class="tab">
-    <h2>Login</h2>
-    <input type="email" id="logEmail" placeholder="Email">
-    <input type="password" id="logPassword" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <div id="logMsg"></div>
-  </div>
-
-  <!-- Profile -->
-  <div id="profile" class="tab">
-    <h2>Profile</h2>
-    <div id="userInfo"></div>
-  </div>
-
-  <!-- Public Chat -->
-  <div id="publicChat" class="tab">
-    <h2>Public Chat</h2>
-    <div class="chat" id="publicChatBox"></div>
-    <input type="text" id="publicMsg" placeholder="Type message...">
-    <button onclick="sendPublic()">Send</button>
-  </div>
-
-  <!-- Private Chat -->
-  <div id="privateChat" class="tab">
-    <h2>Private Chat</h2>
-    <div class="chat" id="privateChatBox"></div>
-    <input type="text" id="privateMsg" placeholder="Type private message...">
-    <button onclick="sendPrivate()">Send</button>
-  </div>
-
-  <!-- Alliances -->
-  <div id="alliances" class="tab">
-    <h2>Alliances</h2>
-    <div id="alliancesList"></div>
-  </div>
-
-  <!-- Code Legislation -->
-  <div id="code" class="tab">
-    <h2>Code Legislation</h2>
-    <div id="codeProposals"></div>
-    <textarea id="proposalInput" placeholder="Your suggestion..."></textarea>
-    <button onclick="sendProposal()">Submit</button>
-  </div>
-</div>
-
-<script>
-  // Firebase Config
   const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    databaseURL: "YOUR_DB_URL",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MSG_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
+    authDomain: "hflsystem.firebaseapp.com",
+    databaseURL: "https://hflsystem-default-rtdb.firebaseio.com",
+    projectId: "hflsystem",
+    storageBucket: "hflsystem.firebasestorage.app",
+    messagingSenderId: "469775027908",
+    appId: "1:469775027908:web:f3501f10942f58ba18c391"
   };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.database();
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth();
+  const db = getDatabase();
 
   // Tabs
-  function openTab(tab) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.getElementById(tab).classList.add('active');
-  }
+  const tabs = ["Home", "About", "Contact", "Chat"];
+  let currentTab = "Home";
 
-  // Register
-  function register() {
-    const email = document.getElementById('regEmail').value;
-    const password = document.getElementById('regPassword').value;
-    auth.createUserWithEmailAndPassword(email, password)
-      .then(res => { document.getElementById('regMsg').innerHTML='<span class="success">Registered!</span>'; })
-      .catch(err => { document.getElementById('regMsg').textContent = err.message; });
-  }
-
-  // Login
-  function login() {
-    const email = document.getElementById('logEmail').value;
-    const password = document.getElementById('logPassword').value;
-    auth.signInWithEmailAndPassword(email, password)
-      .then(res => { document.getElementById('logMsg').innerHTML='<span class="success">Logged in!</span>'; loadProfile(); loadPrivateChat(); })
-      .catch(err => { document.getElementById('logMsg').textContent = err.message; });
-  }
-
-  // Load Profile
-  function loadProfile() {
-    const user = auth.currentUser;
-    if(user){ document.getElementById('userInfo').innerHTML = 'Email: '+user.email; }
-  }
-
-  // Public Chat
-  const chatRef = db.ref('publicChat');
-  chatRef.on('child_added', snapshot => {
-    const msg = snapshot.val();
-    const msgDiv = document.createElement('div');
-    msgDiv.classList.add('message');
-    msgDiv.textContent = msg.email + ': ' + msg.text;
-    document.getElementById('publicChatBox').appendChild(msgDiv);
-    document.getElementById('publicChatBox').scrollTop = document.getElementById('publicChatBox').scrollHeight;
+  window.addEventListener("DOMContentLoaded", () => {
+    renderTabs();
+    renderContent();
+    setupAuth();
   });
-  function sendPublic() {
-    const user = auth.currentUser;
-    const text = document.getElementById('publicMsg').value;
-    if(user && text){
-      chatRef.push({ email:user.email, text:text });
-      document.getElementById('publicMsg').value='';
+
+  function renderTabs() {
+    const tabsContainer = document.createElement("div");
+    tabsContainer.classList.add("tabs");
+    tabs.forEach(tab => {
+      const t = document.createElement("div");
+      t.classList.add("tab"); if(tab===currentTab) t.classList.add("active");
+      t.innerText = tab;
+      t.onclick = () => { currentTab = tab; document.querySelectorAll(".tab").forEach(el=>el.classList.remove("active")); t.classList.add("active"); renderContent(); }
+      tabsContainer.appendChild(t);
+    });
+    document.body.prepend(tabsContainer);
+  }
+
+  function renderContent() {
+    let container = document.querySelector(".container");
+    if(!container) { container = document.createElement("div"); container.classList.add("container"); document.body.appendChild(container);}
+    container.innerHTML = "";
+    if(currentTab==="Home") renderHome(container);
+    else if(currentTab==="About") renderAbout(container);
+    else if(currentTab==="Contact") renderContact(container);
+    else if(currentTab==="Chat") renderChat(container);
+  }
+
+  function renderHome(container){
+    const card = document.createElement("div"); card.classList.add("card");
+    card.innerHTML = `<h2>Welcome to HFL SUS Platform</h2><p>Members Count: <span id="members-count">0</span></p>`;
+    container.appendChild(card);
+    // Count members dynamically
+    const membersCount = ref(db, 'users/');
+    onValue(membersCount, (snapshot)=>{
+      document.getElementById("members-count").innerText = snapshot.size || Object.keys(snapshot.val()||{}).length;
+    });
+  }
+
+  function renderAbout(container){
+    const card = document.createElement("div"); card.classList.add("card");
+    card.innerHTML = `<h2>About HFL</h2>
+    <p>HFL is a civic organization aiming to liberate human freedom, create alternatives to centralized authority, and empower its members. We form a community governed by its members, promoting autonomy and collaboration. 🌐✨</p>`;
+    container.appendChild(card);
+  }
+
+  function renderContact(container){
+    const card = document.createElement("div"); card.classList.add("card");
+    card.innerHTML = `<h2>Join HFL</h2>
+    <input type="text" id="contact-name" placeholder="Name">
+    <input type="email" id="contact-email" placeholder="Email">
+    <button id="contact-submit">Send Request</button>
+    <p id="contact-msg"></p>`;
+    container.appendChild(card);
+    document.getElementById("contact-submit").onclick = () => {
+      const name = document.getElementById("contact-name").value;
+      const email = document.getElementById("contact-email").value;
+      if(!name||!email){ document.getElementById("contact-msg").innerText="Fill all fields"; return;}
+      const newRef = push(ref(db,'requests/')); set(newRef,{name,email,timestamp:Date.now()});
+      document.getElementById("contact-msg").innerText="Request sent ✔️"; document.getElementById("contact-msg").className="success";
     }
   }
 
-  // Private Chat
-  const privateRef = db.ref('privateChat');
-  privateRef.on('child_added', snap => {
-    const msg = snap.val();
-    const div = document.createElement('div');
-    div.textContent = msg.email + ': ' + msg.text;
-    document.getElementById('privateChatBox').appendChild(div);
-    document.getElementById('privateChatBox').scrollTop = document.getElementById('privateChatBox').scrollHeight;
-  });
-  function sendPrivate() {
+  function renderChat(container){
     const user = auth.currentUser;
-    const text = document.getElementById('privateMsg').value;
-    if(user && text){
-      privateRef.push({ email:user.email, text:text });
-      document.getElementById('privateMsg').value='';
+    if(!user) { container.innerHTML="<p>Please register/login to enter the chat 🌐</p>"; return; }
+    const chatDiv = document.createElement("div"); chatDiv.classList.add("chat");
+    const input = document.createElement("input"); input.placeholder="Type message...";
+    const sendBtn = document.createElement("button"); sendBtn.innerText="Send";
+    chatDiv.appendChild(input); chatDiv.appendChild(sendBtn);
+    container.appendChild(chatDiv);
+
+    const messagesRef = ref(db,'messages/');
+    onValue(messagesRef,(snapshot)=>{
+      chatDiv.querySelectorAll(".message").forEach(m=>m.remove());
+      snapshot.forEach(child=>{
+        const m = document.createElement("div"); m.classList.add("message"); if(child.val().uid===user.uid)m.classList.add("self");
+        m.innerText = `${child.val().name}: ${child.val().text}`;
+        chatDiv.insertBefore(m,input);
+      });
+    });
+
+    sendBtn.onclick = () => {
+      if(input.value.trim()==="") return;
+      const newRef = push(messagesRef);
+      set(newRef,{uid:user.uid,name:user.email,text:input.value,timestamp:Date.now()});
+      input.value="";
     }
   }
 
-  // Alliances (SUS placeholder)
-  const allianceRef = db.ref('alliances');
-  allianceRef.on('child_added', snap => {
-    const data = snap.val();
-    const div = document.createElement('div');
-    div.classList.add('card');
-    div.textContent = data.email + ' formed alliance with ' + data.with;
-    document.getElementById('alliancesList').appendChild(div);
-  });
-
-  // Code Legislation
-  const codeRef = db.ref('codeProposals');
-  codeRef.on('child_added', snap => {
-    const data = snap.val();
-    const div = document.createElement('div');
-    div.classList.add('card');
-    div.textContent = data.email + ': ' + data.text;
-    document.getElementById('codeProposals').appendChild(div);
-  });
-  function sendProposal(){
-    const user = auth.currentUser;
-    const text = document.getElementById('proposalInput').value;
-    if(user && text){
-      codeRef.push({ email:user.email, text:text });
-      document.getElementById('proposalInput').value='';
-    }
+  function setupAuth(){
+    // Auto login state
+    onAuthStateChanged(auth,(user)=>{
+      renderContent();
+    });
   }
-
-  openTab('register');
 </script>
+</head>
+<body>
+<header>
+  <h1>HFL SUS Platform</h1>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+    <a href="#">Chat</a>
+  </nav>
+</header>
+<div class="container"></div>
 </body>
 </html>
