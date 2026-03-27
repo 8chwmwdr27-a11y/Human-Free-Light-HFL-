@@ -40,7 +40,6 @@ nav button.active{color:#ff6b6b;}
 <body>
 
 <main>
-
 <!-- Auth -->
 <div class="card" id="auth-card">
 <h2>כניסה / הרשמה</h2>
@@ -90,7 +89,6 @@ nav button.active{color:#ff6b6b;}
 </div>
 
 </div>
-
 </main>
 
 <!-- Navigation -->
@@ -103,18 +101,11 @@ nav button.active{color:#ff6b6b;}
 </nav>
 
 <script type="module">
+// Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 import { getDatabase, ref, push, set, onValue, onChildAdded, update } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
 
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyCe6AIaouRgKfdsK6IEI6in316B52rO778",
   authDomain: "hflsystem.firebaseapp.com",
@@ -126,9 +117,6 @@ const firebaseConfig = {
   measurementId: "G-G4W68NT5T2"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
@@ -140,7 +128,6 @@ const passwordInput=document.getElementById("password");
 const loginBtn=document.getElementById("login-btn");
 const signupBtn=document.getElementById("signup-btn");
 const authMsg=document.getElementById("auth-msg");
-
 const appDiv=document.getElementById("app");
 const pages=document.querySelectorAll(".page");
 const navButtons=[...document.querySelectorAll("nav button")];
@@ -148,14 +135,11 @@ const navButtons=[...document.querySelectorAll("nav button")];
 const postsDiv=document.getElementById("posts");
 const newPostInput=document.getElementById("new-post");
 const postBtn=document.getElementById("post-btn");
-
 const storiesDiv=document.getElementById("stories");
 const friendsDiv=document.getElementById("friends");
-
 const chatBox=document.getElementById("chat-box");
 const chatInput=document.getElementById("chat-input");
 const sendBtn=document.getElementById("send-btn");
-
 const profilePic=document.getElementById("profile-pic");
 const usernameInput=document.getElementById("username");
 const bioInput=document.getElementById("bio");
@@ -203,9 +187,11 @@ updateProfileUI(user);
 function updateProfileUI(user){
 onValue(ref(db,"users/"+user.uid),snapshot=>{
 const data=snapshot.val();
-if(data){profilePic.src=data.profilePic||"https://via.placeholder.com/60";
+if(data){
+profilePic.src=data.profilePic||"https://via.placeholder.com/60";
 usernameInput.value=data.username||user.email.split("@")[0];
-bioInput.value=data.bio||"";}
+bioInput.value=data.bio||"";
+}
 });
 }
 updateProfileBtn.onclick=()=>{
@@ -224,8 +210,8 @@ const user=auth.currentUser;
 if(newPostInput.value.trim()==="") return;
 push(ref(db,"posts"),{
 text:newPostInput.value,
-sender:user.username||user.email,
-avatar:user.username?user.username[0].toUpperCase():user.email[0].toUpperCase(),
+sender:user.email.split("@")[0],
+avatar:user.email[0].toUpperCase(),
 time:new Date().toLocaleTimeString(),
 likes:0,
 comments:[]
@@ -250,18 +236,26 @@ div.innerHTML=`
 postsDiv.appendChild(div);
 
 div.querySelector(".like-btn").onclick=()=>{update(ref(db,"posts/"+snap.key),{likes:(post.likes||0)+1});};
-div.querySelector(".comment-btn").onclick=()=>{
-const comment=prompt("כתוב תגובה:");
-if(comment){const updatedComments=post.comments||[];updatedComments.push({text:comment,sender:auth.currentUser.username||auth.currentUser.email});
-update(ref(db,"posts/"+snap.key),{comments:updatedComments});}
-};
+const commentBtn=div.querySelector(".comment-btn");
 const commentsDiv=div.querySelector(".comments");
-if(post.comments) post.comments.forEach(c=>{const cdiv=document.createElement("div");cdiv.textContent=`${c.sender}: ${c.text}`;commentsDiv.appendChild(cdiv);});
+commentBtn.onclick=()=>{
+const comment=prompt("כתוב תגובה:");
+if(comment){
+const updatedComments=post.comments||[];
+updatedComments.push({text:comment,sender:auth.currentUser.email.split("@")[0]});
+update(ref(db,"posts/"+snap.key),{comments:updatedComments});
+}
+};
+if(post.comments) post.comments.forEach(c=>{
+const cdiv=document.createElement("div");
+cdiv.textContent=`${c.sender}: ${c.text}`;
+commentsDiv.appendChild(cdiv);
+});
 });
 }
 
 // Stories
-const storyImages=["https://picsum.photos/id/237/100","https://picsum.photos/id/238/100","https://picsum.photos/id/239/100","https://picsum.photos/id/240/100","https://picsum.photos/id/241/100"];
+const storyImages=["https://picsum.photos/id/237/100","https://picsum.photos/id/238/100","https://picsum.photos/id/239/100"];
 function updateStories(){storiesDiv.innerHTML="";for(let i=0;i<storyImages.length;i++){
 const s=document.createElement("div");s.className="story";const img=document.createElement("img");img.src=storyImages[i];s.appendChild(img);
 const timer=document.createElement("div");timer.className="story-timer";s.appendChild(timer);
@@ -277,37 +271,41 @@ const user=snap.val();
 if(!user.email.startsWith("bot_")){
 const div=document.createElement("div");
 div.className="friend-item";
-div.innerHTML=`<span>${user.username||user.email}</span><button onclick="addFriend('${snap.key}')">הוסף</button>${user.online?'<span class="online-dot"></span>':''}`;
+div.innerHTML=`<span>${user.username||user.email.split("@")[0]}</span><button onclick="addFriend('${snap.key}')">הוסף</button>${user.online?'<span class="online-dot"></span>':''}`;
 friendsDiv.appendChild(div);}
 });
 }
-window.addFriend=(uid)=>{const current=auth.currentUser;set(ref(db,"users/"+current.uid+"/friends/"+uid),true);alert("המשתמש נוסף לחברים!");};
+window.addFriend=(uid)=>{
+const current=auth.currentUser;
+set(ref(db,"users/"+current.uid+"/friends/"+uid),true);
+alert("המשתמש נוסף לחברים!");
+};
 
 // Chat
 sendBtn.onclick=()=>{
-const user=auth.currentUser;if(chatInput.value.trim()==="") return;
-push(ref(db,"chat"),{text:chatInput.value,sender:user.username||user.email,avatar:user.username?user.username[0].toUpperCase():user.email[0].toUpperCase(),time:new Date().toLocaleTimeString()});
+const user=auth.currentUser;
+if(chatInput.value.trim()==="") return;
+push(ref(db,"chat"),{
+text:chatInput.value,
+sender:user.email.split("@")[0],
+avatar:user.email[0].toUpperCase(),
+time:new Date().toLocaleTimeString()
+});
 chatInput.value="";
 };
 function updateChat(){
 onChildAdded(ref(db,"chat"),data=>{
-const msg=data.val();const div=document.createElement("div");div.className="message";
+const msg=data.val();
+const div=document.createElement("div");
+div.className="message";
 div.innerHTML=`<div class="avatar">${msg.avatar}</div><div><b>${msg.sender}</b>: ${msg.text}</div>`;
-chatBox.appendChild(div);chatBox.scrollTop=chatBox.scrollHeight;
+chatBox.appendChild(div);
+chatBox.scrollTop=chatBox.scrollHeight;
 });
 }
 
-// Bots
-const bots=[{name:"Alice",pic:"https://i.pravatar.cc/60?img=1"},{name:"Bob",pic:"https://i.pravatar.cc/60?img=2"},{name:"Charlie",pic:"https://i.pravatar.cc/60?img=3"},{name:"Dana",pic:"https://i.pravatar.cc/60?img=4"},{name:"Eli",pic:"https://i.pravatar.cc/60?img=5"}];
-const botMessages=["שלום לכולם!","איך הולך?","מישהו כאן?","איזה יום יפה היום","חחח","ממש מגניב!","אני מסכים"];
-bots.forEach(bot=>{function botAct(){const msg=botMessages[Math.floor(Math.random()*botMessages.length)];
-push(ref(db,"chat"),{text:msg,sender:bot.name,avatar:bot.name[0].toUpperCase(),time:new Date().toLocaleTimeString()});
-push(ref(db,"posts"),{text:msg,sender:bot.name,avatar:bot.name[0].toUpperCase(),time:new Date().toLocaleTimeString(),likes:Math.floor(Math.random()*5),comments:[]});
-set(ref(db,"users/bot_"+bot.name),{email:bot.name,username:bot.name,online:true,profilePic:bot.pic});
-setTimeout(botAct,Math.random()*10000+5000);}botAct();});
-
-// Auth State
-onAuthStateChanged(auth,user=>{if(user){initUser(user);}});
+// Auth state
+onAuthStateChanged(auth,user=>{if(user)initUser(user);});
 </script>
 </body>
 </html>
