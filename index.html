@@ -3,230 +3,212 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HFL - Human Free Light</title>
+<title>HFL ULTRA SYSTEM</title>
+
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<!-- Google Fonts & Icons -->
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
 <style>
-/* --- RESET & BASE --- */
-* { margin:0; padding:0; box-sizing:border-box; font-family:'Roboto', sans-serif; }
-body { background:#0a0a0a; color:#fff; }
-a { color:#00f0ff; text-decoration:none; }
-button { cursor:pointer; transition:0.3s; }
-button:hover { transform:scale(1.05); }
-
-/* --- NAV --- */
-nav { display:flex; justify-content:space-between; align-items:center; background:#111; padding:10px 20px; position:sticky; top:0; z-index:100; }
-nav .logo { font-weight:bold; font-size:1.5em; color:#00f0ff; }
-nav ul { display:flex; list-style:none; gap:20px; }
-nav ul li { position:relative; }
-nav ul li a { padding:5px 10px; }
-nav ul li a.active { border-bottom:2px solid #00f0ff; }
-
-/* --- SECTIONS --- */
-section { padding:50px 20px; min-height:80vh; }
-#home { background:#111 url('https://images.unsplash.com/photo-1592496001025-1c0e3c04f5b6?auto=format&fit=crop&w=1920&q=80') no-repeat center/cover; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
-#home h1 { font-size:3em; margin-bottom:20px; color:#00f0ff; animation:fadeIn 2s ease-in-out; }
-#home p { font-size:1.2em; margin-bottom:30px; color:#0ff; }
-#home .members { font-size:1.5em; margin-top:20px; color:#0ff; }
-
-/* --- BUTTONS --- */
-button { background:#00f0ff; color:#000; border:none; padding:10px 20px; border-radius:5px; font-weight:bold; }
-button:active { transform:scale(0.95); }
-
-/* --- FORMS --- */
-form { display:flex; flex-direction:column; gap:15px; max-width:400px; margin:auto; background:#111; padding:20px; border-radius:10px; box-shadow:0 0 20px #00f0ff; }
-form input, form textarea { padding:10px; border-radius:5px; border:none; background:#222; color:#fff; }
-form input[type="password"] { position:relative; }
-form .eye { position:absolute; right:15px; top:10px; cursor:pointer; color:#0ff; }
-form button { margin-top:10px; }
-
-/* --- CHAT --- */
-.chat-container { max-width:600px; margin:auto; background:#111; border:2px solid #00f0ff; border-radius:10px; padding:20px; height:400px; display:flex; flex-direction:column; overflow-y:auto; }
-.chat-message { padding:10px; border-radius:5px; margin-bottom:10px; animation:fadeIn 0.5s; }
-.chat-message.self { background:#00f0ff; color:#000; align-self:flex-end; }
-.chat-message.other { background:#222; color:#0ff; align-self:flex-start; }
-.online-dot { width:10px; height:10px; border-radius:50%; display:inline-block; margin-left:5px; background:#0f0; }
-
-/* --- ANIMATIONS --- */
-@keyframes fadeIn { from {opacity:0;} to{opacity:1;} }
-
-/* --- SUCCESS POPUP --- */
-.success-popup { position:fixed; top:20px; right:20px; background:#0ff; color:#000; padding:15px; border-radius:10px; display:none; box-shadow:0 0 15px #0ff; animation:fadeIn 0.5s; }
-
-/* --- HIERARCHY --- */
-.hierarchy { display:flex; flex-direction:column; gap:10px; border:2px solid #00f0ff; padding:20px; border-radius:10px; max-width:600px; margin:auto; }
-.hierarchy div { background:#111; padding:10px; border-radius:5px; display:flex; justify-content:space-between; align-items:center; }
+body{margin:0;font-family:sans-serif;background:#050816;color:#fff;}
+nav{display:flex;gap:15px;background:#0c1028;padding:12px;position:sticky;top:0;}
+nav a{color:#fff;text-decoration:none;font-weight:bold;}
+section{padding:20px;display:none;}
+.active{display:block;}
+button{padding:10px;background:#00ffc8;border:none;color:#000;font-weight:bold;cursor:pointer;}
+input{padding:8px;margin:5px;}
+.chat{height:200px;overflow:auto;background:#111;padding:10px;}
+.user{border:1px solid #555;padding:5px;margin:3px;cursor:pointer;}
+.online{color:#0f0;}
+.pulse{animation:pulse 1s infinite;}
+@keyframes pulse{0%{opacity:1}50%{opacity:0.3}100%{opacity:1}}
+.toast{position:fixed;bottom:20px;right:20px;background:#0f0;color:#000;padding:10px;display:none;}
 </style>
 </head>
+
 <body>
 
-<!-- NAVIGATION -->
 <nav>
-  <div class="logo">HFL</div>
-  <ul>
-    <li><a href="#home" class="active">Home</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#login">Login</a></li>
-    <li><a href="#chat">Chat</a></li>
-  </ul>
+<a onclick="go('home')">Home</a>
+<a onclick="go('auth')">Login</a>
+<a onclick="go('chat')">Chat</a>
+<a onclick="go('hierarchy')">Hierarchy</a>
+<a onclick="go('legislation')">Legislation</a>
+<a onclick="go('profile')">Profile</a>
 </nav>
 
-<!-- HOME -->
-<section id="home">
-  <h1>Welcome to Human Free Light 🌐</h1>
-  <p>Join the movement for human freedom. Build your civil alternative. ✨</p>
-  <div class="members">Members Joined: <span id="memberCount">0</span> 👥</div>
+<section id="home" class="active">
+<h1>HFL SYSTEM 🌐</h1>
+Members: <span id="count">0</span>
 </section>
 
-<!-- ABOUT -->
-<section id="about">
-  <h2>About Us</h2>
-  <p>
-    HFL is a civil organization designed to create an alternative to centralized power. 
-    Our mission is to liberate individuals, establish freedom zones, and operate autonomously. 
-    We are a self-organizing network of citizens aiming for sovereignty without interference. 
-    🌟
-  </p>
+<section id="auth">
+<h2>Login / Sign Up</h2>
+<input id="email" placeholder="Email">
+<input id="pass" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<button onclick="signup()">Sign Up</button>
 </section>
 
-<!-- CONTACT -->
-<section id="contact">
-  <h2>Contact / Join</h2>
-  <form id="contactForm">
-    <input type="text" placeholder="Full Name" required id="contactName">
-    <input type="email" placeholder="Email" required id="contactEmail">
-    <textarea placeholder="Your Message" required id="contactMsg"></textarea>
-    <button type="submit">Send Message 📩</button>
-  </form>
-</section>
-
-<!-- LOGIN / SIGNUP -->
-<section id="login">
-  <h2>Login / Signup</h2>
-  <form id="authForm">
-    <input type="email" placeholder="Email" required id="authEmail">
-    <div style="position:relative;">
-      <input type="password" placeholder="Password" required id="authPassword">
-      <span class="eye" id="togglePassword">👁️</span>
-    </div>
-    <button type="submit">Login / Signup</button>
-  </form>
-  <p id="passwordTip" style="color:#0ff;">💡 Recommended: min 8 characters & 1 number</p>
-</section>
-
-<!-- CHAT -->
 <section id="chat">
-  <h2>Live Chat 🌐</h2>
-  <div class="chat-container" id="chatBox"></div>
-  <form id="chatForm" style="display:flex; gap:10px; margin-top:10px;">
-    <input type="text" id="chatInput" placeholder="Type a message..." required style="flex:1;">
-    <button type="submit">Send</button>
-  </form>
+<h2>Global Chat 💬</h2>
+<div id="chatBox" class="chat"></div>
+<input id="msg"><button onclick="send()">Send</button>
 </section>
 
-<!-- SUCCESS POPUP -->
-<div class="success-popup" id="successPopup">✅ Action Successful!</div>
-
-<!-- HIERARCHY EXAMPLE -->
 <section id="hierarchy">
-  <h2>Organization Hierarchy</h2>
-  <div class="hierarchy">
-    <div>Admin <span>🌟</span></div>
-    <div>Commanders <span>🔥</span></div>
-    <div>Deputy Commanders <span>⚡</span></div>
-    <div>Agents <span>👥</span></div>
-  </div>
+<h2>Hierarchy 🧠</h2>
+<div id="users"></div>
 </section>
+
+<section id="legislation">
+<h2>Legislation ⚖️</h2>
+<button onclick="joinLaw()">Join</button>
+<div id="lawList"></div>
+</section>
+
+<section id="profile">
+<h2>Personal Zone 🧬</h2>
+<div id="alliances"></div>
+<div id="actions"></div>
+</section>
+
+<div id="toast" class="toast"></div>
 
 <script>
-// --- Firebase Config ---
-// TODO: Replace with your Firebase config
+
+// Firebase
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_BUCKET",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+apiKey:"YOUR_API_KEY",
+authDomain:"YOUR_PROJECT.firebaseapp.com",
+databaseURL:"https://YOUR_PROJECT.firebaseio.com",
+projectId:"YOUR_PROJECT"
 };
 firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+const auth=firebase.auth();
+const db=firebase.database();
 
-// --- MEMBER COUNT ---
-const memberCountEl = document.getElementById('memberCount');
-db.collection('users').onSnapshot(snapshot => {
-  memberCountEl.innerText = snapshot.size;
-});
-
-// --- CONTACT FORM ---
-document.getElementById('contactForm').addEventListener('submit', e => {
-  e.preventDefault();
-  const name = document.getElementById('contactName').value;
-  const email = document.getElementById('contactEmail').value;
-  const msg = document.getElementById('contactMsg').value;
-  db.collection('contactMessages').add({name,email,msg,time:firebase.firestore.Timestamp.now()});
-  showSuccess("Message Sent!");
-  e.target.reset();
-});
-
-// --- AUTH FORM ---
-document.getElementById('togglePassword').addEventListener('click', () => {
-  const passField = document.getElementById('authPassword');
-  passField.type = passField.type === 'password' ? 'text' : 'password';
-});
-document.getElementById('authForm').addEventListener('submit', async e=>{
-  e.preventDefault();
-  const email = document.getElementById('authEmail').value;
-  const password = document.getElementById('authPassword').value;
-  try {
-    let user;
-    // Try login
-    user = await auth.signInWithEmailAndPassword(email,password);
-    showSuccess("Logged in ✅");
-  } catch {
-    // Signup if login fails
-    user = await auth.createUserWithEmailAndPassword(email,password);
-    db.collection('users').doc(user.user.uid).set({email,role:'Agent',joined:firebase.firestore.Timestamp.now()});
-    showSuccess("Registered & Logged in ✅");
-  }
-});
-
-// --- CHAT SYSTEM ---
-const chatBox = document.getElementById('chatBox');
-document.getElementById('chatForm').addEventListener('submit', async e=>{
-  e.preventDefault();
-  const msg = document.getElementById('chatInput').value;
-  const user = auth.currentUser;
-  if(!user) { alert("Please login first!"); return; }
-  await db.collection('chat').add({uid:user.uid, email:user.email, message:msg, time:firebase.firestore.Timestamp.now()});
-  document.getElementById('chatInput').value='';
-});
-db.collection('chat').orderBy('time').onSnapshot(snapshot=>{
-  chatBox.innerHTML='';
-  snapshot.forEach(doc=>{
-    const data = doc.data();
-    const msgDiv = document.createElement('div');
-    msgDiv.classList.add('chat-message');
-    msgDiv.classList.add(data.uid===auth.currentUser?.uid?'self':'other');
-    msgDiv.innerText = `${data.email}: ${data.message}`;
-    chatBox.appendChild(msgDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  });
-});
-
-// --- SUCCESS POPUP ---
-function showSuccess(msg){
-  const popup = document.getElementById('successPopup');
-  popup.innerText=msg;
-  popup.style.display='block';
-  setTimeout(()=>{popup.style.display='none';},2500);
+// UI NAV
+function go(id){
+document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+gsap.from("#"+id,{opacity:0,y:30,duration:0.5});
 }
+
+// Toast
+function toast(msg){
+const t=document.getElementById("toast");
+t.innerText=msg;
+t.style.display="block";
+gsap.fromTo(t,{y:50},{y:0,duration:0.3});
+setTimeout(()=>t.style.display="none",2000);
+}
+
+// AUTH
+function signup(){
+const email=emailInput(),pass=passInput();
+auth.createUserWithEmailAndPassword(email,pass).then(r=>{
+db.ref("users/"+r.user.uid).set({email,role:"agent",online:true});
+toast("Joined HFL ✅");
+});
+}
+function login(){
+auth.signInWithEmailAndPassword(emailInput(),passInput()).then(r=>{
+db.ref("users/"+r.user.uid).update({online:true});
+toast("Connected ⚡");
+});
+}
+function emailInput(){return document.getElementById("email").value;}
+function passInput(){return document.getElementById("pass").value;}
+
+// CHAT
+function send(){
+const msg=document.getElementById("msg").value;
+const u=auth.currentUser;
+if(!u)return toast("Login first");
+db.ref("chat").push({uid:u.uid,msg});
+}
+db.ref("chat").on("child_added",s=>{
+const d=s.val();
+const div=document.createElement("div");
+div.innerText=d.msg;
+document.getElementById("chatBox").appendChild(div);
+gsap.from(div,{x:-20,opacity:0});
+});
+
+// USERS / HIERARCHY
+db.ref("users").on("value",snap=>{
+const data=snap.val()||{};
+document.getElementById("count").innerText=Object.keys(data).length;
+const box=document.getElementById("users");
+box.innerHTML="";
+for(let id in data){
+const u=data[id];
+const div=document.createElement("div");
+div.className="user pulse";
+div.innerHTML=`${u.email} <span class="${u.online?'online':''}">●</span>`;
+div.onclick=()=>userMenu(id);
+box.appendChild(div);
+}
+});
+
+// USER MENU (ALLIANCE / REPORT)
+function userMenu(uid){
+const action=prompt("1 Alliance\n2 Report");
+if(action==1){
+db.ref("alliances").push({from:auth.currentUser.uid,to:uid});
+toast("Alliance Sent 🔵");
+}
+if(action==2){
+db.ref("reports").push({from:auth.currentUser.uid,to:uid});
+toast("Reported ⚠️");
+}
+}
+
+// LEGISLATION
+function joinLaw(){
+const u=auth.currentUser;
+if(!u)return toast("Login");
+db.ref("laws").push({uid:u.uid});
+toast("Joined Law ⚖️");
+}
+db.ref("laws").on("value",snap=>{
+const box=document.getElementById("lawList");
+box.innerHTML="";
+snap.forEach(s=>{
+const div=document.createElement("div");
+div.innerText=s.val().uid;
+box.appendChild(div);
+});
+});
+
+// PROFILE (ALLIANCES)
+db.ref("alliances").on("value",snap=>{
+const u=auth.currentUser;
+if(!u)return;
+const box=document.getElementById("alliances");
+box.innerHTML="<h3>Alliances</h3>";
+snap.forEach(s=>{
+const a=s.val();
+if(a.to==u.uid || a.from==u.uid){
+const div=document.createElement("div");
+div.innerText="Alliance Active";
+box.appendChild(div);
+}
+});
+});
+
+// ONLINE STATUS
+auth.onAuthStateChanged(u=>{
+if(u){
+db.ref("users/"+u.uid).onDisconnect().update({online:false});
+}
+});
+
 </script>
 </body>
 </html>
