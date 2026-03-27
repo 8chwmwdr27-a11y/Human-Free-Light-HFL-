@@ -5,14 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HUMAN FREE LIGHT - HFL</title>
 <link rel="stylesheet" href="style.css">
-<!-- Firebase SDK placeholders -->
+
+<!-- Firebase SDKs -->
 <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
 <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
 <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
+<script type="module" src="script.js"></script>
 </head>
 <body>
 
-<!-- Header / Nav -->
 <header>
   <h1>HUMAN FREE LIGHT - HFL</h1>
   <nav>
@@ -26,9 +27,7 @@
   </nav>
 </header>
 
-<!-- Pages -->
 <main>
-  <!-- Home -->
   <section id="home" class="page active">
     <h2>ברוכים הבאים ל-HFL 🌌</h2>
     <p>אנחנו קבוצה חופשית לשחרור האדם ויצירת אלטרנטיבה לממסד.</p>
@@ -37,7 +36,6 @@
     </div>
   </section>
 
-  <!-- About -->
   <section id="about" class="page">
     <h2>מי אנחנו 🕊️</h2>
     <p>
@@ -45,7 +43,6 @@
     </p>
   </section>
 
-  <!-- Contact / Join -->
   <section id="contact" class="page">
     <h2>הצטרף לארגון ✨</h2>
     <form id="contact-form">
@@ -56,7 +53,6 @@
     </form>
   </section>
 
-  <!-- Login / Signup -->
   <section id="login" class="page">
     <h2>התחברות / הרשמה 🔑</h2>
     <form id="signup-form">
@@ -75,18 +71,14 @@
     </form>
   </section>
 
-  <!-- Chat -->
   <section id="chat" class="page">
     <h2>צ’אט חברים 💬</h2>
     <div id="chat-online">משתמשים אונליין: <span id="online-count">0</span></div>
-    <div id="chat-box">
-      <!-- הודעות יופיעו כאן -->
-    </div>
+    <div id="chat-box"></div>
     <input type="text" placeholder="שלח הודעה..." id="chat-input">
     <button id="chat-send">שלח 💌</button>
   </section>
 
-  <!-- Code / Legislative -->
   <section id="code" class="page">
     <h2>חקיקת קוד 📜</h2>
     <p>אם מצטרפים 10 משתמשים – נוצרת קבוצה פנימית לשינוי נהלים וחוקים.</p>
@@ -96,7 +88,6 @@
     <div id="code-success" class="success-msg">✨ בקשה נשלחה!</div>
   </section>
 
-  <!-- Hierarchy -->
   <section id="hierarchy" class="page">
     <h2>מבנה שליטה 🏰</h2>
     <div id="hierarchy-tree">
@@ -108,6 +99,5 @@
   </section>
 </main>
 
-<script type="module" src="script.js"></script>
 </body>
 </html>
